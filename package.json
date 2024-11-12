@@ -5,7 +5,7 @@
   "dependencies": {
     "@klaytn/kaikas-web3-provider": "^1.0.3",
     "@klaytn/klip-web3-provider": "^1.0.2",
-    "@klaytn/web3modal": "^1.1.0",
+    "@klaytn/web3modal": "^1.1.1",
     "@tabler/icons": "^1.119.0",
     "@walletconnect/utils": "^1.8.0",
     "axios": "^0.27.2",
