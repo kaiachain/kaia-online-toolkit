@@ -1,69 +1,50 @@
-# Kaia Online Toolkit
-Kaia online toolkit provides code examples and github page to help to utilize the Kaia SDK(caver-js) easily.
-You can test library on: https://toolkit.kaia.io/
+# React + TypeScript + Vite
 
-## Web3Modal Example
-On github page, you can see web3modal demo which is derived from [web3modal/example](https://github.com/WalletConnect/web3modal/tree/master/example) and modified to add Kaikas wallet and Klip wallet. You can add support for multiple providers including Kaikas provider and Klip wallet provider by using [@klaytn/web3modal](https://github.com/klaytn/klaytn-web3modal). We have created a PR in web3modal repo, which is still under review. So we temporarily provide @klaytn/web3modal package.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-### Kaikas wallet 
-Download [@klaytn/kaikas-web3-provider](https://github.com/klaytn/kaikas-web3-provider) package. The following code is how to configure their provider options:
+Currently, two official plugins are available:
 
-```javascript
-import Web3 from "web3";
-import Web3Modal from "web3modal";
-import { KaikasWeb3Provider } from "@klaytn/kaikas-web3-provider"
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-const providerOptions = {
-  kaikas: {
-    package: KaikasWeb3Provider // required
-  }
-};
+## Expanding the ESLint configuration
 
-const web3Modal = new Web3Modal({
-    providerOptions: providerOptions //required
-});
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 
-const provider = await web3Modal.connect();
+- Configure the top-level `parserOptions` property like this:
 
-const web3 = new Web3(provider);
+```js
+export default tseslint.config({
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
 ```
 
-### Klip wallet 
-Download [@klaytn/klip-web3-provider](https://github.com/klaytn/klip-web3-provider) package first. Then you can easily integrate Klip wallet as below:
-```javascript
-import Web3 from "web3";
-import Web3Modal from "web3modal";
-import { KlipWeb3Provider } from "@klaytn/klip-web3-provider"
+- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
+- Optionally add `...tseslint.configs.stylisticTypeChecked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
 
-const providerOptions = {
-    klip: {
-        package: KlipWeb3Provider, //required
-        options: {
-            bappName: "web3Modal Example App", //required
-            rpcUrl: "RPC URL" //required
-        }
-    }
-};
+```js
+// eslint.config.js
+import react from 'eslint-plugin-react'
 
-const web3Modal = new Web3Modal({
-    providerOptions: providerOptions //required
-});
-
-const provider = await web3Modal.connect();
-
-const web3 = new Web3(provider);
-```
-
-## Instructions
-
-1. Install dependencies
-
-```bash
-$ npm install
-```
-
-2. Run
-
-```bash
-$ npm start
+export default tseslint.config({
+  // Set the react version
+  settings: { react: { version: '18.3' } },
+  plugins: {
+    // Add the react plugin
+    react,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended rules
+    ...react.configs.recommended.rules,
+    ...react.configs['jsx-runtime'].rules,
+  },
+})
 ```

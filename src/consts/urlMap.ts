@@ -1,27 +1,31 @@
-const network = {
-  testnet: {
-    rpc: 'https://public-en-kairos.node.kaia.io',
-    scope: 'https://kairos.kaiascope.com/tx/',
-    finder: 'https://kairos.kaiascan.io/tx/',
-    finderToken: 'https://kairos.kaiascan.io/token/',
-    finderNFT: 'https://kairos.kaiascan.io/nft/',
-  },
-  mainnet: {
-    rpc: 'https://public-en.node.kaia.io',
-    scope: 'https://kaiascope.com/tx/',
-    finder: 'https://kaiascan.io/tx/',
-    finderToken: 'https://kaiascan.io/token/',
-    finderNFT: 'https://kaiascan.io/nft/',
-  },
-}
+const kaiaDocs = 'https://docs.kaia.io/'
 
-const kip = {
-  'KIP-7': 'https://kips.kaia.io/KIPs/kip-7',
-  'KIP-17': 'https://kips.kaia.io/KIPs/kip-17',
-  'KIP-37': 'https://kips.kaia.io/KIPs/kip-37',
-}
+const kairosFaucet = 'https://www.kaia.io/faucet'
+
+const metamaskDocs = 'https://docs.metamask.io/wallet/'
+
+const eip = 'https://eips.ethereum.org/'
+
+const rainbowKit = 'https://www.rainbowkit.com/docs/'
+
+const openZeppelinWizard = 'https://wizard.openzeppelin.com/'
+const openzeppelinDocs = 'https://docs.openzeppelin.com/'
+
+const remix = 'https://remix.ethereum.org/'
+
+const kaiawallet = 'https://docs.kaiawallet.io/'
+
+const okxDocs = 'https://www.okx.com/web3/build/docs/'
 
 export default {
-  network,
-  kip,
+  kaiaDocs,
+  kairosFaucet,
+  metamaskDocs,
+  eip,
+  rainbowKit,
+  openZeppelinWizard,
+  openzeppelinDocs,
+  remix,
+  kaiawallet,
+  okxDocs,
 }
