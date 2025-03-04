@@ -3,12 +3,12 @@ import { JsonRpcProvider } from 'ethers'
 import { Wallet } from '@kaiachain/ethers-ext/v6'
 import { Web3 } from '@kaiachain/web3js-ext'
 import { AccountKeyType, TxType } from '@kaiachain/js-ext-core'
-
-import { SdkType } from '@/types'
-import { useNetwork, useValidator } from '../independent'
-import { parseError, stringify } from '@/common'
 import _ from 'lodash'
 import { privateKeyToAccount } from 'viem/accounts'
+
+import { SdkType } from '@/types'
+import { useNetwork } from '../independent'
+import { parseError, stringify } from '@/common'
 
 export type UseAccountKeyMultiSigPageReturn = {
   sdk: SdkType
@@ -17,7 +17,6 @@ export type UseAccountKeyMultiSigPageReturn = {
   setPrivateKey: (privateKey: string) => void
   address: string
   setAddress: React.Dispatch<React.SetStateAction<string>>
-  addressErrMsg: string
   accountUpdate: () => Promise<void>
   loading: boolean
   result: string
@@ -38,10 +37,6 @@ export const useAccountKeyMultiSigPage =
     const [loading, setLoading] = useState(false)
     const { rpcUrl } = useNetwork()
     const [address, setAddress] = useState('')
-    const { errorMessage: addressErrMsg } = useValidator({
-      value: address,
-      type: 'address',
-    })
 
     const [privateKey, setPrivateKey] = useState('')
 
@@ -109,7 +104,6 @@ export const useAccountKeyMultiSigPage =
       setPrivateKey,
       address,
       setAddress,
-      addressErrMsg,
       accountUpdate,
       loading,
       result,

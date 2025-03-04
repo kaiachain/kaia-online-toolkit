@@ -6,6 +6,7 @@ import {
   useKaTheme,
 } from '@kaiachain/kaia-design-system'
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts'
+import _ from 'lodash'
 
 import {
   View,
@@ -19,12 +20,10 @@ import {
   Row,
   PrivateKeyForm,
 } from '@/components'
-
 import { useAccountKeyMultiSigPage } from '@/hooks/page/useAccountKeyMultiSigPage'
 import { CODE_EG, EvmChainIdEnum, URL_MAP } from '@/consts'
 import { UTIL } from '@/common'
-import { useAccountKey, useBalance, useNetwork } from '@/hooks'
-import _ from 'lodash'
+import { useAccountKey, useBalance, useNetwork, useValidator } from '@/hooks'
 
 const AccountKeyMultiSig = (): ReactElement => {
   const {
@@ -34,7 +33,6 @@ const AccountKeyMultiSig = (): ReactElement => {
     setPrivateKey,
     address,
     setAddress,
-    addressErrMsg,
     accountUpdate,
     loading,
     result,
@@ -57,6 +55,11 @@ const AccountKeyMultiSig = (): ReactElement => {
     accountKeyName,
     refetch: refetchAccountKey,
   } = useAccountKey({ address })
+
+  const { errorMessage: addressErrMsg } = useValidator({
+    value: address,
+    type: 'address',
+  })
 
   const sufficientBalance = useMemo(
     () => !!balance && UTIL.toBn(UTIL.demicrofy(balance)).isGreaterThan(0.1),

@@ -21,11 +21,6 @@ const subMenuList = [
     to: RoutePath.Account_Keystore,
   },
   {
-    title: 'KeystoreV4',
-    isKaiaOnly: true,
-    to: RoutePath.Account_KeystoreV4,
-  },
-  {
     title: 'AccountKeyPublic',
     isKaiaOnly: true,
     to: RoutePath.Account_AccountKeyPublic,

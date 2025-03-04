@@ -14,11 +14,10 @@ import {
   Row,
   PrivateKeyForm,
 } from '@/components'
-
 import { useAccountKeyPublicPage } from '@/hooks/page/useAccountKeyPublicPage'
 import { CODE_EG, EvmChainIdEnum, URL_MAP } from '@/consts'
 import { UTIL } from '@/common'
-import { useAccountKey, useBalance, useNetwork } from '@/hooks'
+import { useAccountKey, useBalance, useNetwork, useValidator } from '@/hooks'
 
 const AccountKeyPublic = (): ReactElement => {
   const {
@@ -28,7 +27,6 @@ const AccountKeyPublic = (): ReactElement => {
     setPrivateKey,
     address,
     setAddress,
-    addressErrMsg,
     newPrivateKey,
     setNewPrivateKey,
     accountUpdate,
@@ -45,6 +43,11 @@ const AccountKeyPublic = (): ReactElement => {
     accountKeyName,
     refetch: refetchAccountKey,
   } = useAccountKey({ address })
+
+  const { errorMessage: addressErrMsg } = useValidator({
+    value: address,
+    type: 'address',
+  })
 
   const sufficientBalance = useMemo(
     () => !!balance && UTIL.toBn(UTIL.demicrofy(balance)).isGreaterThan(0.1),

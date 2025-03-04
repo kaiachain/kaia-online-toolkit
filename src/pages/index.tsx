@@ -9,7 +9,6 @@ import Account_DevPage from './Account/Dev'
 import Account_BasicPage from './Account/Basic'
 import Account_MnemonicPage from './Account/Mnemonic'
 import Account_KeystorePage from './Account/Keystore'
-import Account_KeystoreV4Page from './Account/KeystoreV4'
 import Account_AccountKeyPublicPage from './Account/AccountKeyPublic'
 import Account_AccountKeyFailPage from './Account/AccountKeyFail'
 import Account_AccountKeyMultiSigPage from './Account/AccountKeyMultiSig'
@@ -63,10 +62,6 @@ export default [
           {
             path: RoutePath.Account_Keystore,
             Component: Account_KeystorePage,
-          },
-          {
-            path: RoutePath.Account_KeystoreV4,
-            Component: Account_KeystoreV4Page,
           },
           {
             path: RoutePath.Account_AccountKeyPublic,

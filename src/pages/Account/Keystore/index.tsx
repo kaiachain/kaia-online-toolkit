@@ -1,9 +1,9 @@
 import { ReactElement, useState } from 'react'
+import { KaButton } from '@kaiachain/kaia-design-system'
 
 import { Container, Row, SdkSelectBox } from '@/components'
 import { useKeystorePage } from '@/hooks/page/useKeystorePage'
 import KeyToStore from './KeyToStore'
-import { KaButton } from '@kaiachain/kaia-design-system'
 import StoreToKey from './StoreToKey'
 
 const Keystore = (): ReactElement => {

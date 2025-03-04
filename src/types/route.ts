@@ -10,7 +10,6 @@ export enum RoutePath {
   Account_AccountKeyFail = '/account/accountKeyFail',
   Account_AccountKeyWeightedMultiSig = '/account/accountKeyWeightedMultiSig',
   Account_AccountKeyRoleBased = '/account/accountKeyRoleBased',
-  Account_KeystoreV4 = '/account/keystoreV4',
 
   EIP = '/eip',
   //EIP_About = '/eip/about',
@@ -45,7 +44,6 @@ export type RouteParams = {
   [RoutePath.Account_AccountKeyFail]: undefined
   [RoutePath.Account_AccountKeyWeightedMultiSig]: undefined
   [RoutePath.Account_AccountKeyRoleBased]: undefined
-  [RoutePath.Account_KeystoreV4]: undefined
 
   [RoutePath.EIP]: undefined
   //[RoutePath.EIP_About]: undefined

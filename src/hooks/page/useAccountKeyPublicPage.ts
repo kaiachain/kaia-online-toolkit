@@ -5,7 +5,7 @@ import { Web3, getPublicKeyFromPrivate } from '@kaiachain/web3js-ext'
 import { AccountKeyType, TxType } from '@kaiachain/js-ext-core'
 
 import { SdkType } from '@/types'
-import { useNetwork, useValidator } from '../independent'
+import { useNetwork } from '../independent'
 import { parseError, stringify } from '@/common'
 
 export type UseAccountKeyPublicPageReturn = {
@@ -15,7 +15,6 @@ export type UseAccountKeyPublicPageReturn = {
   setPrivateKey: (privateKey: string) => void
   address: string
   setAddress: React.Dispatch<React.SetStateAction<string>>
-  addressErrMsg: string
   newPrivateKey: string
   setNewPrivateKey: (newPrivateKey: string) => void
   accountUpdate: () => Promise<void>
@@ -29,10 +28,6 @@ export const useAccountKeyPublicPage = (): UseAccountKeyPublicPageReturn => {
   const [loading, setLoading] = useState(false)
   const { rpcUrl } = useNetwork()
   const [address, setAddress] = useState('')
-  const { errorMessage: addressErrMsg } = useValidator({
-    value: address,
-    type: 'address',
-  })
 
   const [privateKey, setPrivateKey] = useState('')
 
@@ -94,7 +89,6 @@ export const useAccountKeyPublicPage = (): UseAccountKeyPublicPageReturn => {
     setPrivateKey,
     address,
     setAddress,
-    addressErrMsg,
     newPrivateKey,
     setNewPrivateKey,
     accountUpdate,
