@@ -1,8 +1,6 @@
 import { ReactElement } from 'react'
 import styled from 'styled-components'
 import kaiaBrandImg from '@/images/kaia_brand.svg'
-
-import { Card, LinkA, Row, View } from '@/components'
 import {
   KaButton,
   KaLogo,
@@ -10,9 +8,14 @@ import {
   themeFunc,
   useKaTheme,
 } from '@kaiachain/kaia-design-system'
+
+import { Card, LinkA, Row, View } from '@/components'
 import { useAppNavigate, useLayout } from '@/hooks'
 import { RoutePath } from '@/types'
-import { STYLE } from '@/consts'
+import { STYLE, URL_MAP } from '@/consts'
+
+import metamaskImg from '@/images/metamask.svg'
+import rainbowkitImg from '@/images/rainbowkit.png'
 
 const StyledContainer = styled(View)`
   padding: 20px;
@@ -101,8 +104,42 @@ const Landing = (): ReactElement => {
               </View>
             </Row>
           </Card>
-          <Card></Card>
-          <Card></Card>
+          <Card>
+            <Row style={{ gap: 10 }}>
+              <View style={{ alignItems: 'center', gap: 10 }}>
+                <img src={rainbowkitImg} style={{ width: 50 }} />
+                <KaText fontType="body/md_400">RainbowKit</KaText>
+              </View>
+              <View style={{ gap: 10, flex: 1, alignItems: 'center' }}>
+                <KaButton
+                  type="secondary"
+                  fill
+                  onClick={() => navigate(RoutePath.Wallet_RainbowKit)}
+                >
+                  Tryout
+                </KaButton>
+                <LinkA link={URL_MAP.rainbowKit}>Official Docs</LinkA>
+              </View>
+            </Row>
+          </Card>
+          <Card>
+            <Row style={{ gap: 10 }}>
+              <View style={{ alignItems: 'center', gap: 10 }}>
+                <img src={metamaskImg} style={{ width: 50 }} />
+                <KaText fontType="body/md_400">Metamask</KaText>
+              </View>
+              <View style={{ gap: 10, flex: 1, alignItems: 'center' }}>
+                <KaButton
+                  type="secondary"
+                  fill
+                  onClick={() => navigate(RoutePath.Wallet)}
+                >
+                  Tryout
+                </KaButton>
+                <LinkA link={URL_MAP.metamaskDocs}>Official Docs</LinkA>
+              </View>
+            </Row>
+          </Card>
         </StyledWalletGrid>
       </StyledSection>
       <StyledSection>
