@@ -1,12 +1,9 @@
-declare global {
-  interface Window {
-    klaytn: any
-    ethereum: any
-  }
-}
-
 export * from './common'
 export * from './currencies'
 export * from './route'
-export * from './compoents'
-export * from './web3modal'
+export * from './component'
+export * from './theme'
+export * from './sdk'
+export * from './eip'
+export * from './kaiawalletMobileApi'
+export * from './utility'
