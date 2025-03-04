@@ -1,54 +1,55 @@
-import { css, FlattenSimpleInterpolation } from 'styled-components'
+import { css } from 'styled-components'
 
-const DESKTOP_WIDE = 1920
-const DESKTOP = 1440
-const TABLET = 1024
-const MOBILE = 480
-
-const media = {
-  overWideDesktop: `(min-width: ${DESKTOP_WIDE + 1}px)`,
-  overDesktop: `(min-width: ${DESKTOP + 1}px)`,
-  mobile: `(max-width: ${MOBILE}px)`,
-  tablet: `(max-width: ${TABLET}px)`,
+const size = {
+  DESKTOP_WIDE: 1920,
+  DESKTOP: 1440,
+  TABLET: 1024,
+  MOBILE: 480,
+  MINI: 320,
 }
 
-const setMediaWidth = (type?: 'sm' | 'lg'): FlattenSimpleInterpolation => css`
+const media = {
+  overWideDesktop: `(min-width: ${size.DESKTOP_WIDE + 1}px)`,
+  overDesktop: `(min-width: ${size.DESKTOP + 1}px)`,
+  mini: `(max-width: ${size.MINI}px)`,
+  mobile: `(max-width: ${size.MOBILE}px)`,
+  tablet: `(max-width: ${size.TABLET}px)`,
+}
+
+const clickable = css`
+  cursor: pointer;
+  user-select: none;
+`
+
+const setMediaWidth = () => css`
   margin: 0 auto;
-  width: ${type === 'lg' ? DESKTOP : type === 'sm' ? MOBILE : TABLET}px;
-  max-width: 100%;
+  width: ${size.DESKTOP}px;
   @media ${media.tablet} {
     width: auto;
     margin: 0;
   }
 `
 
-const clickable = css`
-  cursor: pointer;
-  :hover {
-    opacity: 0.8;
-  }
-`
-
-const clickableShadow = css`
-  cursor: pointer;
-  :hover {
-    box-shadow: 0px 0px 6px white;
-  }
-`
-
-const ellipsis = css`
-  display: block;
-  overflow-x: hidden;
+const ellipsisRow = (row: number) => css`
+  min-width: auto;
+  overflow: hidden;
   text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: ${row};
+  -webkit-box-orient: vertical;
 `
 
-export default {
-  TABLET,
-  MOBILE,
-  DESKTOP_WIDE,
-  setMediaWidth,
+const inheritText = css`
+  font: inherit;
+`
+
+const STYLE = {
+  size,
   media,
   clickable,
-  clickableShadow,
-  ellipsis,
+  setMediaWidth,
+  ellipsisRow,
+  inheritText,
 }
+
+export default STYLE
