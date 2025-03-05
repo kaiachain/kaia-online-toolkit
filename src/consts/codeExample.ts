@@ -169,6 +169,53 @@ const tx = {
 const result = await web3.eth.sendSignedTransaction(signResult.rawTransaction)`,
 })
 
+const accountUpdateRoleBased = createSdkObject({
+  ethersExt: `import { JsonRpcProvider } from 'ethers'
+import { AccountKeyType, TxType, Wallet } from '@kaiachain/ethers-ext/v6'
+\nconst provider = new JsonRpcProvider(rpcUrl)
+const wallet = new Wallet(privateKey, provider)
+const tx = {
+    type: TxType.AccountUpdate,
+    from: address,
+    gasLimit: 1_000_000,
+    key: {
+        type: AccountKeyType.RoleBased,
+        keys: [
+          // RoleTransaction
+          AccountKeyNil|AccountKeyLegacy|AccountKeyPublic|AccountKeyFail|AccountKeyWeightedMultiSig
+          // RoleAccountUpdate
+          AccountKeyNil|AccountKeyLegacy|AccountKeyPublic|AccountKeyFail|AccountKeyWeightedMultiSig
+          // RoleFeePayer 
+          AccountKeyNil|AccountKeyLegacy|AccountKeyPublic|AccountKeyFail|AccountKeyWeightedMultiSig
+        ],
+    },
+}
+\nconst sentTx = await wallet.sendTransaction(tx)
+const result = await sentTx.wait()`,
+  web3Ext: `import { Web3, AccountKeyType, TxType, getPublicKeyFromPrivate } from '@kaiachain/web3js-ext'
+\nconst provider = new Web3.providers.HttpProvider(rpcUrl)
+const web3 = new Web3(provider)
+const senderAccount = web3.eth.accounts.privateKeyToAccount(privateKey)
+const tx = {
+    type: TxType.AccountUpdate,
+    from: address,
+    gasLimit: 1_000_000,
+    key: {
+        type: AccountKeyType.RoleBased,
+        keys: [
+          // RoleTransaction
+          AccountKeyNil|AccountKeyLegacy|AccountKeyPublic|AccountKeyFail|AccountKeyWeightedMultiSig
+          // RoleAccountUpdate
+          AccountKeyNil|AccountKeyLegacy|AccountKeyPublic|AccountKeyFail|AccountKeyWeightedMultiSig
+          // RoleFeePayer 
+          AccountKeyNil|AccountKeyLegacy|AccountKeyPublic|AccountKeyFail|AccountKeyWeightedMultiSig
+        ],
+    },
+}
+\nconst signResult = await senderAccount.signTransaction(tx)
+const result = await web3.eth.sendSignedTransaction(signResult.rawTransaction)`,
+})
+
 const encryptPrivateKey = createSdkObject({
   ethers: `import { Wallet } from 'ethers'
 \nconst wallet = new Wallet(privateKey)
@@ -193,6 +240,7 @@ export default {
   accountUpdatePublic,
   accountUpdateFail,
   accountUpdateMultiSig,
+  accountUpdateRoleBased,
   encryptPrivateKey,
   decryptPrivateKey,
 }
