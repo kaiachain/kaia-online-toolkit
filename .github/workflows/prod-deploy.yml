@@ -1,4 +1,4 @@
-name: klaytn-online-toolkit prod deploy workflow
+name: kaia-online-toolkit prod deploy workflow
 on:
   push:
     tags:
@@ -19,7 +19,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN_PROD }}
-          role-session-name: SessionForKlaytnActions
+          role-session-name: SessionForKaiaActions
           aws-region: ${{ secrets.AWS_REGION_PROD }}
 
       - name: Installing Node.js

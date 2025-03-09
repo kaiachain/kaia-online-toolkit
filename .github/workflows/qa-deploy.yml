@@ -1,4 +1,4 @@
-name: klaytn-online-toolkit prod deploy workflow
+name: kaia-online-toolkit qa deploy workflow
 on:
   push:
     branches:
