@@ -1,8 +1,8 @@
-name: kaia-online-toolkit prod deploy workflow
+name: kaia-online-toolkit qa deploy workflow
 on:
   push:
-    tags:
-      - v[0-9]+.[0-9]+.[0-9]+
+    branches:
+      - main
 
 jobs:
   deploy:
@@ -18,9 +18,9 @@ jobs:
       - name: Get AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN_PROD }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN_QA }}
           role-session-name: SessionForKaiaActions
-          aws-region: ${{ secrets.AWS_REGION_PROD }}
+          aws-region: ${{ secrets.AWS_REGION_QA }}
 
       - name: Installing Node.js
         uses: actions/setup-node@v3
@@ -35,8 +35,8 @@ jobs:
 
       - name: Sync to S3 bucket and validation cloudfront
         env:
-          S3_BUCKET: ${{ secrets.S3_BUCKET_TOOLKIT_PROD }}
-          CLOUDFRONT_ID: ${{ secrets.CLOUDFRONT_ID_TOOLKIT_PROD }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET_TOOLKIT_QA }}
+          CLOUDFRONT_ID: ${{ secrets.CLOUDFRONT_ID_TOOLKIT_QA }}
         run: |
           aws s3 sync build s3://$S3_BUCKET --delete
           aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_ID --paths "/*"
