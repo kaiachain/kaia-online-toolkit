@@ -25,13 +25,13 @@ jobs:
       - name: Installing Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '20.12.2'
 
       - name: Installing dependencies
-        run: npm install
+        run: yarn install
 
       - name: Build static files
-        run: npm run build
+        run: yarn build
 
       - name: Sync to S3 bucket and validation cloudfront
         env:
