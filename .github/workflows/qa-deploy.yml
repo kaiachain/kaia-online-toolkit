@@ -2,7 +2,7 @@ name: kaia-online-toolkit qa deploy workflow
 on:
   push:
     branches:
-      - main
+      - qa
 
 jobs:
   deploy:
