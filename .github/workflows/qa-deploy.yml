@@ -38,5 +38,5 @@ jobs:
           S3_BUCKET: ${{ secrets.S3_BUCKET_TOOLKIT_QA }}
           CLOUDFRONT_ID: ${{ secrets.CLOUDFRONT_ID_TOOLKIT_QA }}
         run: |
-          aws s3 sync build s3://$S3_BUCKET --delete
+          aws s3 sync dist s3://$S3_BUCKET --delete
           aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_ID --paths "/*"
