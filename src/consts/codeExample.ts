@@ -285,6 +285,42 @@ const rlpDecode = createSdkObject({
 // "0x123456789"`,
 })
 
+const blockInfo = createSdkObject({
+  viem: `import { createPublicClient, http } from 'viem'
+
+const client = createPublicClient({
+  transport: http(rpcUrl),
+})
+
+// Get block by number
+const blockByNumber = await client.getBlock({
+  blockNumber: BigInt(blockNumber)
+})
+
+// Get block by hash
+const blockByHash = await client.getBlock({
+  blockHash: '0x...'
+})`,
+  ethers: `import { JsonRpcProvider } from 'ethers'
+
+const provider = new JsonRpcProvider(rpcUrl)
+
+// Get block by number
+const blockByNumber = await provider.getBlock(blockNumber)
+
+// Get block by hash
+const blockByHash = await provider.getBlock('0x...')`,
+  web3: `import { Web3 } from 'web3'
+
+const web3 = new Web3(rpcUrl)
+
+// Get block by number
+const blockByNumber = await web3.eth.getBlock(blockNumber)
+
+// Get block by hash
+const blockByHash = await web3.eth.getBlock('0x...')`,
+})
+
 export default {
   switchNetworkCode,
   accountFromPrivateKey,
@@ -297,4 +333,5 @@ export default {
   decryptPrivateKey,
   rlpEncode,
   rlpDecode,
+  blockInfo,
 }
