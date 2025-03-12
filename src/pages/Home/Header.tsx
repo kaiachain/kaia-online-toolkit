@@ -10,7 +10,7 @@ import {
 import kaiaBrandImg from '@/images/kaia_brand.svg'
 import { ReactComponent as MenuImg } from '@/images/menu.svg'
 
-import { Row, View } from '@/components'
+import { Row, View, ThemeToggle } from '@/components'
 import { RoutePath } from '@/types'
 import { useAppNavigate, useLayout, useNetwork } from '@/hooks'
 import { useLocation } from 'react-router'
@@ -221,14 +221,17 @@ const Header = (): ReactElement => {
             ))}
           </Row>
         )}
-        <KaSelectBox
-          containerStyle={{ maxWidth: isUnderTabletWidth ? 120 : 200 }}
-          selectedValue={chainId}
-          optionList={networkOptionList}
-          onSelect={(value) => {
-            changeNetwork(value as EvmChainIdEnum)
-          }}
-        />
+        <Row style={{ gap: 16, alignItems: 'center' }}>
+          <ThemeToggle />
+          <KaSelectBox
+            containerStyle={{ maxWidth: isUnderTabletWidth ? 120 : 200 }}
+            selectedValue={chainId}
+            optionList={networkOptionList}
+            onSelect={(value) => {
+              changeNetwork(value as EvmChainIdEnum)
+            }}
+          />
+        </Row>
       </StyledMainNav>
       {openMobileMenu && (
         <ClickAwayListener onClickAway={() => setOpenMobileMenu(false)}>

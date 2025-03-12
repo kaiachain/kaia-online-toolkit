@@ -1,6 +1,6 @@
 import { ReactElement, ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { darkTheme, KaThemeProvider } from '@kaiachain/kaia-design-system'
+import { darkTheme, lightTheme, KaThemeProvider } from '@kaiachain/kaia-design-system'
 import { ThemeProvider } from 'styled-components'
 import { MetaMaskProvider } from '@metamask/sdk-react'
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit'
@@ -10,6 +10,8 @@ import { mainnet, sepolia, kaia, kairos } from 'wagmi/chains'
 import Modal from 'react-modal'
 import { ToastContainer } from 'react-toastify'
 import '@rainbow-me/rainbowkit/styles.css'
+
+import { useTheme } from '../hooks/independent'
 
 const config = getDefaultConfig({
   appName: 'Kaia Toolkit',
@@ -27,6 +29,10 @@ const queryClient = new QueryClient()
 Modal.setAppElement('#root')
 
 function AppProvider({ children }: { children: ReactNode }): ReactElement {
+  const { theme } = useTheme()
+  const currentTheme = theme === 'dark' ? darkTheme : lightTheme
+  const themeMode = theme === 'dark' ? 'dark' : 'light'
+
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
@@ -39,8 +45,8 @@ function AppProvider({ children }: { children: ReactNode }): ReactElement {
               },
             }}
           >
-            <ThemeProvider theme={darkTheme}>
-              <KaThemeProvider theme="dark">
+            <ThemeProvider theme={currentTheme}>
+              <KaThemeProvider theme={themeMode}>
                 {children}
                 <ToastContainer />
               </KaThemeProvider>
