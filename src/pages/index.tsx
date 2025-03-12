@@ -36,6 +36,8 @@ import RlpDecodePage from './BlockTx/RlpDecode'
 import UtilityPage from './Utility'
 import Utility_AboutPage from './Utility/About'
 import Utility_UnitConverterPage from './Utility/UnitConverter'
+import Utility_AddressChecksumPage from './Utility/AddressChecksum'
+import Utility_SignVerifyPage from './Utility/SignVerify'
 
 export default [
   {
@@ -165,6 +167,14 @@ export default [
           {
             path: RoutePath.Utility_UnitConverter,
             Component: Utility_UnitConverterPage,
+          },
+          {
+            path: RoutePath.Utility_AddressChecksum,
+            Component: Utility_AddressChecksumPage,
+          },
+          {
+            path: RoutePath.Utility_SignVerify,
+            Component: Utility_SignVerifyPage,
           },
         ],
       },

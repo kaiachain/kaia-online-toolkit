@@ -321,6 +321,65 @@ const blockByNumber = await web3.eth.getBlock(blockNumber)
 const blockByHash = await web3.eth.getBlock('0x...')`,
 })
 
+const addressChecksum = createSdkObject({
+  viem: `import { getAddress, isAddress } from 'viem'
+
+// Check if address is valid
+const isValid = isAddress(address)
+
+// Convert to checksum address
+const checksumAddress = getAddress(address)`,
+  ethers: `import { ethers } from 'ethers'
+
+// Check if address is valid
+const isValid = ethers.isAddress(address)
+
+// Convert to checksum address
+const checksumAddress = ethers.getAddress(address)`,
+  web3: `import { Web3 } from 'web3'
+
+const web3 = new Web3()
+
+// Check if address is valid
+const isValid = web3.utils.isAddress(address)
+
+// Convert to checksum address
+const checksumAddress = web3.utils.toChecksumAddress(address)`,
+})
+
+const signVerify = createSdkObject({
+  viem: `import { verifyMessage, recoverMessageAddress } from 'viem'
+
+// Verify a message was signed by the address
+const isValid = await verifyMessage({
+  address,
+  message,
+  signature,
+})
+
+// Recover the address that signed the message
+const recoveredAddress = await recoverMessageAddress({
+  message,
+  signature,
+})`,
+  ethers: `import { ethers } from 'ethers'
+
+// Recover the address that signed the message
+const recoveredAddress = ethers.verifyMessage(message, signature)
+
+// Verify if the recovered address matches the expected address
+const isValid = recoveredAddress.toLowerCase() === address.toLowerCase()`,
+  web3: `import { Web3 } from 'web3'
+
+const web3 = new Web3()
+
+// Recover the address that signed the message
+const recoveredAddress = web3.eth.accounts.recover(message, signature)
+
+// Verify if the recovered address matches the expected address
+const isValid = recoveredAddress.toLowerCase() === address.toLowerCase()`,
+})
+
 export default {
   switchNetworkCode,
   accountFromPrivateKey,
@@ -334,4 +393,6 @@ export default {
   rlpEncode,
   rlpDecode,
   blockInfo,
+  addressChecksum,
+  signVerify,
 }
