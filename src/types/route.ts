@@ -25,43 +25,51 @@ export enum RoutePath {
   Wallet_KaiawalletMobile = '/wallet/kaiawalletMobile',
   Wallet_Okx = '/wallet/okx',
 
-  Transaction = '/transaction',
+  BlockTx = '/blockTx',
+  //BlockTx_Block = '/blockTx/block',
+  BlockTx_RlpEncode = '/blockTx/rlpEncode',
+  BlockTx_RlpDecode = '/blockTx/rlpDecode',
 
   Utility = '/utility',
   //Utility_About = '/utility/about',
   Utility_UnitConverter = '/utility/unitConverter',
 }
 
-export type RouteParams = {
-  [RoutePath.Home]: undefined
+const RouteParams: Record<RoutePath, any> = {
+  [RoutePath.Home]: undefined,
 
-  [RoutePath.Account]: undefined
-  [RoutePath.Account_Dev]: undefined
-  //[RoutePath.Account_Basic]: undefined
-  [RoutePath.Account_Mnemonic]: undefined
-  [RoutePath.Account_Keystore]: undefined
-  [RoutePath.Account_AccountKeyPublic]: undefined
-  [RoutePath.Account_AccountKeyFail]: undefined
-  [RoutePath.Account_AccountKeyWeightedMultiSig]: undefined
-  [RoutePath.Account_AccountKeyRoleBased]: undefined
+  [RoutePath.Account]: undefined,
+  [RoutePath.Account_Dev]: undefined,
+  //[RoutePath.Account_Basic]: undefined,
+  [RoutePath.Account_Mnemonic]: undefined,
+  [RoutePath.Account_Keystore]: undefined,
+  [RoutePath.Account_AccountKeyPublic]: undefined,
+  [RoutePath.Account_AccountKeyFail]: undefined,
+  [RoutePath.Account_AccountKeyWeightedMultiSig]: undefined,
+  [RoutePath.Account_AccountKeyRoleBased]: undefined,
 
-  [RoutePath.EIP]: undefined
-  //[RoutePath.EIP_About]: undefined
-  [RoutePath.EIP_20]: undefined
-  [RoutePath.EIP_721]: undefined
-  [RoutePath.EIP_1155]: undefined
-  [RoutePath.EIP_2612]: undefined
+  [RoutePath.EIP]: undefined,
+  //[RoutePath.EIP_About]: undefined,
+  [RoutePath.EIP_20]: undefined,
+  [RoutePath.EIP_721]: undefined,
+  [RoutePath.EIP_1155]: undefined,
+  [RoutePath.EIP_2612]: undefined,
 
-  [RoutePath.Wallet]: undefined
-  //[RoutePath.Wallet_Metamask]: undefined
-  [RoutePath.Wallet_RainbowKit]: undefined
-  [RoutePath.Wallet_KaiawalletExtension]: undefined
-  [RoutePath.Wallet_KaiawalletMobile]: undefined
-  [RoutePath.Wallet_Okx]: undefined
+  [RoutePath.Wallet]: undefined,
+  //[RoutePath.Wallet_Metamask]: undefined,
+  [RoutePath.Wallet_RainbowKit]: undefined,
+  [RoutePath.Wallet_KaiawalletExtension]: undefined,
+  [RoutePath.Wallet_KaiawalletMobile]: undefined,
+  [RoutePath.Wallet_Okx]: undefined,
 
-  [RoutePath.Transaction]: undefined
+  [RoutePath.BlockTx]: undefined,
+  //[RoutePath.BlockTx_Block]: undefined,
+  [RoutePath.BlockTx_RlpEncode]: undefined,
+  [RoutePath.BlockTx_RlpDecode]: undefined,
 
-  [RoutePath.Utility]: undefined
-  //[RoutePath.Utility_About]: undefined
-  [RoutePath.Utility_UnitConverter]: undefined
+  [RoutePath.Utility]: undefined,
+  //[RoutePath.Utility_About]: undefined,
+  [RoutePath.Utility_UnitConverter]: undefined,
 }
+
+export type RouteParams = typeof RouteParams

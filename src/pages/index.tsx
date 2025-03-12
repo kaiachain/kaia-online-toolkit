@@ -28,7 +28,9 @@ import Wallet_KaiawalletExtensionPage from './Wallet/KaiawalletExtension'
 import Wallet_KaiawalletMobilePage from './Wallet/KaiawalletMobile'
 import Wallet_OkxPage from './Wallet/Okx'
 
-import TransactionPage from './Transaction'
+import BlockTxPage from './BlockTx'
+import BlockInfoPage from './BlockTx/BlockInfo'
+import RlpEncodePage from './BlockTx/RlpEncode'
 
 import UtilityPage from './Utility'
 import Utility_AboutPage from './Utility/About'
@@ -134,8 +136,18 @@ export default [
         ],
       },
       {
-        path: RoutePath.Transaction,
-        Component: TransactionPage,
+        path: RoutePath.BlockTx,
+        Component: BlockTxPage,
+        children: [
+          {
+            index: true,
+            Component: BlockInfoPage,
+          },
+          {
+            path: RoutePath.BlockTx_RlpEncode,
+            Component: RlpEncodePage,
+          },
+        ],
       },
       {
         path: RoutePath.Utility,

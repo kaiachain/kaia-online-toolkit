@@ -233,6 +233,29 @@ const decryptedKey = wallet.privateKey`,
 const decryptedKey = decrypted.privateKey`,
 })
 
+const rlpEncode = createSdkObject({
+  ethers: `import { encodeRlp } from 'ethers'
+\nencode("0x12345678");
+// '0x8412345678'
+\nencode([ "0x12345678" ]);
+// '0xc58412345678'
+\nencode([ new Uint8Array([ 0x12, 0x34, 0x56, 0x78 ]) ]);
+// '0xc58412345678'
+\nencode([ [ "0x42", [ "0x43" ] ], "0x12345678", [ ] ]);
+// '0xcac342c1438412345678c0'
+\nencode([ ]);
+// '0xc0'`,
+  viem: `import { toRlp } from 'viem'
+\ntoRlp('0x123456789')
+// "0x850123456789"
+\ntoRlp(['0x7f', '0x7f', '0x8081e8'])
+// "0xc67f7f838081e8"
+\ntoRlp(new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9]))
+// "0x89010203040506070809"
+\ntoRlp('0x123456789', 'bytes')
+// Uint8Array [133, 1, 35, 69, 103, 137]`,
+})
+
 export default {
   switchNetworkCode,
   accountFromPrivateKey,
@@ -243,4 +266,5 @@ export default {
   accountUpdateRoleBased,
   encryptPrivateKey,
   decryptPrivateKey,
+  rlpEncode,
 }

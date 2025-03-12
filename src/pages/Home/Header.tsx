@@ -94,8 +94,8 @@ const menuList: {
     to: RoutePath.Wallet,
   },
   {
-    title: 'Transaction',
-    to: RoutePath.Transaction,
+    title: 'Block & Tx',
+    to: RoutePath.BlockTx,
   },
   {
     title: 'Utility',
