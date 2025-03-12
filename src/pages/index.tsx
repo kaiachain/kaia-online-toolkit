@@ -30,6 +30,7 @@ import Wallet_OkxPage from './Wallet/Okx'
 
 import BlockTxPage from './BlockTx'
 import BlockInfoPage from './BlockTx/BlockInfo'
+import TxHistoryPage from './BlockTx/TxHistory'
 import RlpEncodePage from './BlockTx/RlpEncode'
 import RlpDecodePage from './BlockTx/RlpDecode'
 
@@ -145,6 +146,10 @@ export default [
           {
             index: true,
             Component: BlockInfoPage,
+          },
+          {
+            path: RoutePath.BlockTx_TxHistory,
+            Component: TxHistoryPage,
           },
           {
             path: RoutePath.BlockTx_RlpEncode,

@@ -27,6 +27,7 @@ export enum RoutePath {
 
   BlockTx = '/blockTx',
   //BlockTx_Block = '/blockTx/block',
+  BlockTx_TxHistory = '/blockTx/txHistory',
   BlockTx_RlpEncode = '/blockTx/rlpEncode',
   BlockTx_RlpDecode = '/blockTx/rlpDecode',
 
@@ -66,6 +67,7 @@ const RouteParams: Record<RoutePath, any> = {
 
   [RoutePath.BlockTx]: undefined,
   //[RoutePath.BlockTx_Block]: undefined,
+  [RoutePath.BlockTx_TxHistory]: undefined,
   [RoutePath.BlockTx_RlpEncode]: undefined,
   [RoutePath.BlockTx_RlpDecode]: undefined,
 

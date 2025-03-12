@@ -10,6 +10,10 @@ const subMenuList = [
     to: RoutePath.BlockTx,
   },
   {
+    title: 'Transaction History',
+    to: RoutePath.BlockTx_TxHistory,
+  },
+  {
     title: 'RLP Encode',
     to: RoutePath.BlockTx_RlpEncode,
   },
