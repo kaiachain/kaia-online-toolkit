@@ -66,6 +66,7 @@ export const PrivateKeyForm = ({
               onClick={() => {
                 setPrivateKey(generatePrivateKey())
               }}
+              aria-label="Generate private key"
             >
               Generate
             </KaButton>
