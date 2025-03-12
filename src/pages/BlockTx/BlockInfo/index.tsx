@@ -6,7 +6,7 @@ import { useBlockInfoPage } from '@/hooks/page/useBlockInfoPage'
 import { CODE_EG } from '@/consts'
 
 const BlockInfo = (): ReactElement => {
-  const { sdk, setSdk, blockQuery, setBlockQuery, getBlockInfo, result } =
+  const { sdk, setSdk, blockQuery, setBlockQuery, getBlockInfo, loading, result } =
     useBlockInfoPage()
 
   return (
@@ -30,6 +30,7 @@ const BlockInfo = (): ReactElement => {
           />
         }
         onClickBtn={getBlockInfo}
+        btnLoading={loading}
         code={CODE_EG.blockInfo[sdk]}
         result={result[sdk]}
       />

@@ -22,6 +22,7 @@ export type UseBlockInfoPageReturn = {
   blockQuery: string
   setBlockQuery: React.Dispatch<React.SetStateAction<string>>
   getBlockInfo: () => Promise<void>
+  loading: boolean
   result: SdkObject
 }
 
@@ -29,10 +30,12 @@ export const useBlockInfoPage = (): UseBlockInfoPageReturn => {
   const [sdk, setSdk] = useState<SdkType>('ethers')
   const [blockQuery, setBlockQuery] = useState('')
   const [result, setResult] = useState(DefaultSdkObject)
+  const [loading, setLoading] = useState(false)
   const { rpcUrl } = useNetwork()
 
   const getBlockInfo = async () => {
     const res = { ...result }
+    setLoading(true)
     try {
       if (!blockQuery) {
         toast.error('Please enter a block number or hash')
@@ -71,6 +74,8 @@ export const useBlockInfoPage = (): UseBlockInfoPageReturn => {
       }
     } catch (error) {
       res[sdk] = parseError(error)
+    } finally {
+      setLoading(false)
     }
     setResult(res)
   }
@@ -81,6 +86,7 @@ export const useBlockInfoPage = (): UseBlockInfoPageReturn => {
     blockQuery,
     setBlockQuery,
     getBlockInfo,
+    loading,
     result,
   }
 }
