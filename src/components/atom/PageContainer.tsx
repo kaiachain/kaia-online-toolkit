@@ -148,7 +148,7 @@ const SubMenuItem = ({
   return (
     <StyledSubMenuItem
       onClick={() => {
-        navigate(to)
+        navigate(to as any)
         onClick()
       }}
     >
@@ -180,16 +180,22 @@ const SideMenu = ({
 
   return (
     <ClickAwayListener onClickAway={() => setOpenMobileSubMenu(false)}>
-      <StyledSideMenu>
+      <StyledSideMenu role="navigation" aria-label="Sub menu">
         {isUnderTabletWidth && (
-          <StyledSubMenuOpen onClick={() => setOpenMobileSubMenu(true)}>
+          <StyledSubMenuOpen 
+            onClick={() => setOpenMobileSubMenu(true)}
+            role="button"
+            aria-label="Open sub menu"
+            aria-expanded={openMobileSubMenu}
+            tabIndex={0}
+          >
             <KaIcon.ChevronRight fill="white" width={18} />
             <KaText color="white" fontType="body/md_400" center>
               {`Sub\nMenu`}
             </KaText>
           </StyledSubMenuOpen>
         )}
-        <StyledSubMenu $isMobileOpen={openMobileSubMenu}>
+        <StyledSubMenu $isMobileOpen={openMobileSubMenu} role="menu">
           {menuList.map((item) => (
             <SubMenuItem
               key={item.title}
@@ -202,6 +208,9 @@ const SideMenu = ({
           {isUnderTabletWidth && (
             <StyledMobileSubMenuClose
               onClick={() => setOpenMobileSubMenu(false)}
+              role="button"
+              aria-label="Close sub menu"
+              tabIndex={0}
             >
               <KaIcon.X fill="white" width={18} />
             </StyledMobileSubMenuClose>
