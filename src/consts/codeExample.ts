@@ -256,6 +256,35 @@ const rlpEncode = createSdkObject({
 // Uint8Array [133, 1, 35, 69, 103, 137]`,
 })
 
+const rlpDecode = createSdkObject({
+  ethers: `import { decodeRlp } from 'ethers'
+\ndecode("0x8412345678");
+// '0x12345678'
+\ndecode("0xcac342c1438412345678c0");
+// [
+//   [
+//     '0x42',
+//     [
+//       '0x43'
+//     ]
+//   ],
+//   '0x12345678',
+//   []
+// ]
+\ndecode("0xc0");
+// []`,
+
+  viem: `import { fromRlp } from 'viem'
+\nfromRlp('0x850123456789', 'hex')
+// "0x123456789"
+\nfromRlp('0xc67f7f838081e8', 'hex')
+// ['0x7f', '0x7f', '0x8081e8']
+\nfromRlp('0x89010203040506070809', 'bytes')
+//  Uint8Array [1, 2, 3, 4, 5, 6, 7, 8, 9]
+\nfromRlp(new Uint8Array ([133, 1, 35, 69, 103, 137]), 'hex')
+// "0x123456789"`,
+})
+
 export default {
   switchNetworkCode,
   accountFromPrivateKey,
@@ -267,4 +296,5 @@ export default {
   encryptPrivateKey,
   decryptPrivateKey,
   rlpEncode,
+  rlpDecode,
 }
