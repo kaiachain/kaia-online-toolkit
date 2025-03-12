@@ -37,15 +37,19 @@ export const Container = ({
 
   return (
     <StyledContainer>
-      <View>
+      <View role="heading" aria-level={1}>
         <KaText fontType="title/md_700">{title}</KaText>
-        {link && <LinkA link={link.url}>{link?.text}</LinkA>}
+        {link && <LinkA link={link.url} aria-label={`${link?.text} - external link`}>{link?.text}</LinkA>}
       </View>
       {isValidChain ? (
         children
       ) : (
         <View style={{ gap: 10 }}>
-          <KaText fontType="title/xs_700" color={getTheme('danger', '5')}>
+          <KaText 
+            fontType="title/xs_700" 
+            color={getTheme('danger', '5')}
+            role="alert"
+          >
             This page is only available on Kaia and Kairos.
           </KaText>
           <Row style={{ gap: 10 }}>
@@ -55,6 +59,7 @@ export const Container = ({
               }}
               type="secondary"
               size="md"
+              aria-label="Change network to Kaia"
             >
               Change to Kaia
             </KaButton>
@@ -64,6 +69,7 @@ export const Container = ({
               }}
               type="secondary"
               size="md"
+              aria-label="Change network to Kairos"
             >
               Change to Kairos
             </KaButton>

@@ -54,7 +54,13 @@ export const FormInput = ({
       <StyledInputWrapper>
         <KaTextInput
           {...rest}
-          inputProps={{ type, ...inputProps }}
+          inputProps={{ 
+            type, 
+            ...inputProps
+          }}
+          aria-label={label || 'Input field'}
+          aria-invalid={!!errorMessage}
+          aria-errormessage={errorMessage ? `error-${label?.replace(/\s+/g, '-').toLowerCase() || 'input'}` : undefined}
           isError={!!errorMessage}
           leftUnit={inputProps.value && hide ? '  ' : undefined}
         />
@@ -64,11 +70,14 @@ export const FormInput = ({
               setType(hideText ? inputProps.type : 'password')
               setHideText(!hideText)
             }}
+            role="button"
+            aria-label={hideText ? "Show password" : "Hide password"}
+            tabIndex={0}
           >
             {
               <img
                 src={hideText ? eyeSlash : eye}
-                alt="eye"
+                alt={hideText ? "Show password" : "Hide password"}
                 style={{ width: 20 }}
               />
             }
@@ -76,7 +85,12 @@ export const FormInput = ({
         )}
       </StyledInputWrapper>
       {errorMessage && (
-        <KaText fontType="body/sm_400" color={getTheme('danger', '5')}>
+        <KaText 
+          fontType="body/sm_400" 
+          color={getTheme('danger', '5')}
+          id={`error-${label?.replace(/\s+/g, '-').toLowerCase() || 'input'}`}
+          role="alert"
+        >
           {errorMessage}
         </KaText>
       )}

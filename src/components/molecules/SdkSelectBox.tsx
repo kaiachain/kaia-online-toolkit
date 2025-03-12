@@ -32,6 +32,7 @@ export const SdkSelectBox = ({
         optionList={filteredOptionList}
         onSelect={(value) => setSdk(value as SdkType)}
         selectedValue={sdk}
+        aria-label="Select SDK"
       />
     </Row>
   )
