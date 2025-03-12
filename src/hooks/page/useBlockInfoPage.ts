@@ -27,7 +27,7 @@ export type UseBlockInfoPageReturn = {
 }
 
 export const useBlockInfoPage = (): UseBlockInfoPageReturn => {
-  const [sdk, setSdk] = useState<SdkType>('ethers')
+  const [sdk, setSdk] = useState<SdkType>('viem')
   const [blockQuery, setBlockQuery] = useState('')
   const [result, setResult] = useState(DefaultSdkObject)
   const [loading, setLoading] = useState(false)
@@ -44,6 +44,13 @@ export const useBlockInfoPage = (): UseBlockInfoPageReturn => {
 
       // Determine if the query is a block hash or number
       const isBlockHash = blockQuery.startsWith('0x') && blockQuery.length === 66
+      
+      // Validate block number format if not a hash
+      if (!isBlockHash && isNaN(parseInt(blockQuery))) {
+        toast.error('Invalid block number format')
+        return
+      }
+      
       const blockIdentifier = isBlockHash ? blockQuery : parseInt(blockQuery)
 
       if (sdk === 'ethers') {
@@ -59,21 +66,31 @@ export const useBlockInfoPage = (): UseBlockInfoPageReturn => {
           transport: http(rpcUrl),
         })
         let block;
-        if (isBlockHash) {
+        if (isBlockHash && typeof blockIdentifier === 'string') {
           block = await client.getBlock({
             blockHash: blockIdentifier as `0x${string}`,
           });
-        } else {
+        } else if (!isBlockHash && typeof blockIdentifier === 'number') {
           block = await client.getBlock({
-            blockNumber: BigInt(blockIdentifier as number),
+            blockNumber: BigInt(blockIdentifier),
           });
+        } else {
+          throw new Error('Invalid block identifier type');
         }
         res[sdk] = stringify(block)
       } else {
         toast('Not supported with this SDK')
       }
     } catch (error) {
-      res[sdk] = parseError(error)
+      if (error instanceof Error) {
+        if (error.message.includes('not found')) {
+          res[sdk] = `Block ${blockQuery} not found. Please check the block number or hash.`
+        } else {
+          res[sdk] = parseError(error)
+        }
+      } else {
+        res[sdk] = parseError(error)
+      }
     } finally {
       setLoading(false)
     }
