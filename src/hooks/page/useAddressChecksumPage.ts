@@ -6,6 +6,7 @@ import { toast } from 'react-toastify'
 
 import { SdkObject, SdkType } from '@/types'
 import { parseError } from '@/common'
+import { useDefaultSdk } from '../independent'
 
 const DefaultSdkObject: SdkObject = {
   viem: '',
@@ -26,7 +27,8 @@ export type UseAddressChecksumPageReturn = {
 }
 
 export const useAddressChecksumPage = (): UseAddressChecksumPageReturn => {
-  const [sdk, setSdk] = useState<SdkType>('viem')
+  const { defaultSdk } = useDefaultSdk()
+  const [sdk, setSdk] = useState<SdkType>(defaultSdk)
   const [address, setAddress] = useState('')
   const [result, setResult] = useState(DefaultSdkObject)
   const [loading, setLoading] = useState(false)

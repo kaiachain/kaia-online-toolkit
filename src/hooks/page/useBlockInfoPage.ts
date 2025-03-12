@@ -6,7 +6,7 @@ import { toast } from 'react-toastify'
 
 import { SdkObject, SdkType } from '@/types'
 import { parseError, stringify } from '@/common'
-import { useNetwork } from '../independent'
+import { useDefaultSdk, useNetwork } from '../independent'
 
 const DefaultSdkObject: SdkObject = {
   viem: '',
@@ -27,7 +27,8 @@ export type UseBlockInfoPageReturn = {
 }
 
 export const useBlockInfoPage = (): UseBlockInfoPageReturn => {
-  const [sdk, setSdk] = useState<SdkType>('viem')
+  const { defaultSdk } = useDefaultSdk()
+  const [sdk, setSdk] = useState<SdkType>(defaultSdk)
   const [blockQuery, setBlockQuery] = useState('')
   const [result, setResult] = useState(DefaultSdkObject)
   const [loading, setLoading] = useState(false)

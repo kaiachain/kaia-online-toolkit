@@ -6,6 +6,7 @@ import { toast } from 'react-toastify'
 
 import { SdkObject, SdkType } from '@/types'
 import { parseError } from '@/common'
+import { useDefaultSdk } from '../independent'
 
 const DefaultSdkObject: SdkObject = {
   viem: '',
@@ -30,7 +31,8 @@ export type UseSignVerifyPageReturn = {
 }
 
 export const useSignVerifyPage = (): UseSignVerifyPageReturn => {
-  const [sdk, setSdk] = useState<SdkType>('viem')
+  const { defaultSdk } = useDefaultSdk()
+  const [sdk, setSdk] = useState<SdkType>(defaultSdk)
   const [address, setAddress] = useState('')
   const [message, setMessage] = useState('')
   const [signature, setSignature] = useState('')
@@ -49,13 +51,13 @@ export const useSignVerifyPage = (): UseSignVerifyPageReturn => {
       if (sdk === 'viem') {
         try {
           const isValid = await verifyMessage({
-            address,
+            address: address as `0x${string}`,
             message,
-            signature,
+            signature: signature as `0x${string}`,
           })
           const recoveredAddress = await recoverMessageAddress({
             message,
-            signature,
+            signature: signature as `0x${string}`,
           })
           res[sdk] = `Verification: ${isValid ? 'Valid' : 'Invalid'}\nRecovered address: ${recoveredAddress}`
         } catch (error) {

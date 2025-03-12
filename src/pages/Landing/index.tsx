@@ -9,7 +9,7 @@ import {
   useKaTheme,
 } from '@kaiachain/kaia-design-system'
 
-import { Card, LinkA, Row, View } from '@/components'
+import { Card, DefaultSdkSelector, LinkA, Row, View } from '@/components'
 import { useAppNavigate, useLayout } from '@/hooks'
 import { RoutePath } from '@/types'
 import { STYLE, URL_MAP } from '@/consts'
@@ -78,7 +78,8 @@ const Landing = (): ReactElement => {
             Tools, resources, and guidance to make your Web3 journey seamless.
           </KaText>
         </View>
-        <View>
+        <View style={{ gap: 16 }}>
+          <DefaultSdkSelector />
           <KaButton size="md" onClick={() => navigate(RoutePath.Account)}>
             Start from account
           </KaButton>
