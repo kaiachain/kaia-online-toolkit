@@ -5,7 +5,7 @@ import { Web3 } from 'web3'
 import { toast } from 'react-toastify'
 
 import { SdkObject, SdkType } from '@/types'
-import { parseError } from '@/common'
+import { useLoadingState } from '../independent'
 
 const DefaultSdkObject: SdkObject = {
   viem: '',
@@ -35,58 +35,75 @@ export const useSignVerifyPage = (): UseSignVerifyPageReturn => {
   const [message, setMessage] = useState('')
   const [signature, setSignature] = useState('')
   const [result, setResult] = useState(DefaultSdkObject)
-  const [loading, setLoading] = useState(false)
+  const { loading, withLoading } = useLoadingState()
 
   const verifySignature = async () => {
     const res = { ...result }
-    setLoading(true)
-    try {
-      if (!address || !message || !signature) {
-        toast.error('Please fill in all fields')
-        return
-      }
+    
+    await withLoading(async () => {
+      try {
+        if (!address || !message || !signature) {
+          toast.error('Please fill in all fields')
+          return
+        }
 
-      if (sdk === 'viem') {
-        try {
-          const isValid = await verifyMessage({
-            address,
-            message,
-            signature,
-          })
-          const recoveredAddress = await recoverMessageAddress({
-            message,
-            signature,
-          })
-          res[sdk] = `Verification: ${isValid ? 'Valid' : 'Invalid'}\nRecovered address: ${recoveredAddress}`
-        } catch (error) {
-          res[sdk] = `Invalid signature: ${parseError(error)}`
+        if (sdk === 'viem') {
+          try {
+            const isValid = await verifyMessage({
+              address: address as `0x${string}`,
+              message,
+              signature: signature as `0x${string}`,
+            })
+            const recoveredAddress = await recoverMessageAddress({
+              message,
+              signature: signature as `0x${string}`,
+            })
+            res[sdk] = `Verification: ${isValid ? 'Valid' : 'Invalid'}\nRecovered address: ${recoveredAddress}`
+          } catch (error) {
+            if (error instanceof Error) {
+              res[sdk] = `Invalid signature: ${error.message}`
+            } else {
+              res[sdk] = 'Invalid signature: Unknown error'
+            }
+          }
+        } else if (sdk === 'ethers') {
+          try {
+            const recoveredAddress = ethers.verifyMessage(message, signature)
+            const isValid = recoveredAddress.toLowerCase() === address.toLowerCase()
+            res[sdk] = `Verification: ${isValid ? 'Valid' : 'Invalid'}\nRecovered address: ${recoveredAddress}`
+          } catch (error) {
+            if (error instanceof Error) {
+              res[sdk] = `Invalid signature: ${error.message}`
+            } else {
+              res[sdk] = 'Invalid signature: Unknown error'
+            }
+          }
+        } else if (sdk === 'web3') {
+          try {
+            const web3 = new Web3()
+            const recoveredAddress = web3.eth.accounts.recover(message, signature)
+            const isValid = recoveredAddress.toLowerCase() === address.toLowerCase()
+            res[sdk] = `Verification: ${isValid ? 'Valid' : 'Invalid'}\nRecovered address: ${recoveredAddress}`
+          } catch (error) {
+            if (error instanceof Error) {
+              res[sdk] = `Invalid signature: ${error.message}`
+            } else {
+              res[sdk] = 'Invalid signature: Unknown error'
+            }
+          }
+        } else {
+          toast('Not supported with this SDK')
         }
-      } else if (sdk === 'ethers') {
-        try {
-          const recoveredAddress = ethers.verifyMessage(message, signature)
-          const isValid = recoveredAddress.toLowerCase() === address.toLowerCase()
-          res[sdk] = `Verification: ${isValid ? 'Valid' : 'Invalid'}\nRecovered address: ${recoveredAddress}`
-        } catch (error) {
-          res[sdk] = `Invalid signature: ${parseError(error)}`
+      } catch (error) {
+        if (error instanceof Error) {
+          res[sdk] = `ERROR: ${error.message}`
+        } else {
+          res[sdk] = 'An unknown error occurred'
         }
-      } else if (sdk === 'web3') {
-        try {
-          const web3 = new Web3()
-          const recoveredAddress = web3.eth.accounts.recover(message, signature)
-          const isValid = recoveredAddress.toLowerCase() === address.toLowerCase()
-          res[sdk] = `Verification: ${isValid ? 'Valid' : 'Invalid'}\nRecovered address: ${recoveredAddress}`
-        } catch (error) {
-          res[sdk] = `Invalid signature: ${parseError(error)}`
-        }
-      } else {
-        toast('Not supported with this SDK')
       }
-    } catch (error) {
-      res[sdk] = parseError(error)
-    } finally {
-      setLoading(false)
-    }
-    setResult(res)
+      
+      setResult(res)
+    })
   }
 
   return {
