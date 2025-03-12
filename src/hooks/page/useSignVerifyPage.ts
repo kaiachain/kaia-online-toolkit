@@ -5,7 +5,7 @@ import { Web3 } from 'web3'
 import { toast } from 'react-toastify'
 
 import { SdkObject, SdkType } from '@/types'
-import { parseError } from '@/common'
+import { handleError } from '@/common'
 
 const DefaultSdkObject: SdkObject = {
   viem: '',
@@ -49,17 +49,18 @@ export const useSignVerifyPage = (): UseSignVerifyPageReturn => {
       if (sdk === 'viem') {
         try {
           const isValid = await verifyMessage({
-            address,
+            address: address as `0x${string}`,
             message,
-            signature,
+            signature: signature as `0x${string}`,
           })
           const recoveredAddress = await recoverMessageAddress({
             message,
-            signature,
+            signature: signature as `0x${string}`,
           })
           res[sdk] = `Verification: ${isValid ? 'Valid' : 'Invalid'}\nRecovered address: ${recoveredAddress}`
         } catch (error) {
-          res[sdk] = `Invalid signature: ${parseError(error)}`
+          const errorDetails = handleError(error)
+          res[sdk] = `Invalid signature: ${errorDetails.message}`
         }
       } else if (sdk === 'ethers') {
         try {
@@ -67,7 +68,8 @@ export const useSignVerifyPage = (): UseSignVerifyPageReturn => {
           const isValid = recoveredAddress.toLowerCase() === address.toLowerCase()
           res[sdk] = `Verification: ${isValid ? 'Valid' : 'Invalid'}\nRecovered address: ${recoveredAddress}`
         } catch (error) {
-          res[sdk] = `Invalid signature: ${parseError(error)}`
+          const errorDetails = handleError(error)
+          res[sdk] = `Invalid signature: ${errorDetails.message}`
         }
       } else if (sdk === 'web3') {
         try {
@@ -76,13 +78,15 @@ export const useSignVerifyPage = (): UseSignVerifyPageReturn => {
           const isValid = recoveredAddress.toLowerCase() === address.toLowerCase()
           res[sdk] = `Verification: ${isValid ? 'Valid' : 'Invalid'}\nRecovered address: ${recoveredAddress}`
         } catch (error) {
-          res[sdk] = `Invalid signature: ${parseError(error)}`
+          const errorDetails = handleError(error)
+          res[sdk] = `Invalid signature: ${errorDetails.message}`
         }
       } else {
         toast('Not supported with this SDK')
       }
     } catch (error) {
-      res[sdk] = parseError(error)
+      const errorDetails = handleError(error)
+      res[sdk] = `${errorDetails.category.toUpperCase()} ERROR: ${errorDetails.message}`
     } finally {
       setLoading(false)
     }

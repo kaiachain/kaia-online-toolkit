@@ -5,7 +5,7 @@ import { Web3 } from 'web3'
 import { toast } from 'react-toastify'
 
 import { SdkObject, SdkType } from '@/types'
-import { parseError } from '@/common'
+import { handleError } from '@/common'
 
 const DefaultSdkObject: SdkObject = {
   viem: '',
@@ -69,7 +69,8 @@ export const useAddressChecksumPage = (): UseAddressChecksumPageReturn => {
         toast('Not supported with this SDK')
       }
     } catch (error) {
-      res[sdk] = parseError(error)
+      const errorDetails = handleError(error)
+      res[sdk] = `${errorDetails.category.toUpperCase()} ERROR: ${errorDetails.message}`
     } finally {
       setLoading(false)
     }

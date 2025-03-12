@@ -5,7 +5,7 @@ import { Web3 } from 'web3'
 import { toast } from 'react-toastify'
 
 import { SdkObject, SdkType } from '@/types'
-import { parseError, stringify } from '@/common'
+import { handleError, stringify } from '@/common'
 import { useNetwork } from '../independent'
 
 const DefaultSdkObject: SdkObject = {
@@ -82,14 +82,11 @@ export const useBlockInfoPage = (): UseBlockInfoPageReturn => {
         toast('Not supported with this SDK')
       }
     } catch (error) {
-      if (error instanceof Error) {
-        if (error.message.includes('not found')) {
-          res[sdk] = `Block ${blockQuery} not found. Please check the block number or hash.`
-        } else {
-          res[sdk] = parseError(error)
-        }
+      const errorDetails = handleError(error)
+      if (errorDetails.category === 'blockchain' && errorDetails.message.includes('not found')) {
+        res[sdk] = `Block ${blockQuery} not found. Please check the block number or hash.`
       } else {
-        res[sdk] = parseError(error)
+        res[sdk] = `${errorDetails.category.toUpperCase()} ERROR: ${errorDetails.message}`
       }
     } finally {
       setLoading(false)
