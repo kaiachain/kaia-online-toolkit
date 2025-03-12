@@ -13,6 +13,14 @@ const subMenuList = [
     title: 'Unit Converter',
     to: RoutePath.Utility_UnitConverter,
   },
+  {
+    title: 'Address Checksum',
+    to: RoutePath.Utility_AddressChecksum,
+  },
+  {
+    title: 'Signature Verify',
+    to: RoutePath.Utility_SignVerify,
+  },
 ]
 
 const Utility = (): ReactElement => {

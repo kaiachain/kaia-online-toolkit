@@ -33,6 +33,8 @@ export enum RoutePath {
   Utility = '/utility',
   //Utility_About = '/utility/about',
   Utility_UnitConverter = '/utility/unitConverter',
+  Utility_AddressChecksum = '/utility/addressChecksum',
+  Utility_SignVerify = '/utility/signVerify',
 }
 
 const RouteParams: Record<RoutePath, any> = {
@@ -70,6 +72,8 @@ const RouteParams: Record<RoutePath, any> = {
   [RoutePath.Utility]: undefined,
   //[RoutePath.Utility_About]: undefined,
   [RoutePath.Utility_UnitConverter]: undefined,
+  [RoutePath.Utility_AddressChecksum]: undefined,
+  [RoutePath.Utility_SignVerify]: undefined,
 }
 
 export type RouteParams = typeof RouteParams
