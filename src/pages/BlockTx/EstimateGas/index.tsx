@@ -1,13 +1,13 @@
 import { ReactElement } from 'react'
 import { KaText, KaTextInput, useKaTheme } from '@kaiachain/kaia-design-system'
 
-import { ActionCard, Container, SdkSelectBox } from '@/components'
+import { ActionCard, Card, Container, SdkSelectBox } from '@/components'
 import { useEstimateGasPage } from '@/hooks/page/useEstimateGasPage'
 import { CODE_EG } from '@/consts'
-import { Card } from '@/components/atom'
 
 const EstimateGas = (): ReactElement => {
-  const { sdk, setSdk, txData, setTxData, estimateGas, result } = useEstimateGasPage()
+  const { sdk, setSdk, txData, setTxData, estimateGas, result } =
+    useEstimateGasPage()
   const { getTheme } = useKaTheme()
 
   const isNotViem = sdk !== 'viem'
@@ -37,8 +37,6 @@ const EstimateGas = (): ReactElement => {
                 onChangeText: setTxData,
               }}
               containerStyle={{ flex: 1 }}
-              multiline
-              numberOfLines={5}
             />
           }
           onClickBtn={estimateGas}
