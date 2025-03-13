@@ -18,7 +18,7 @@ const EstimateGas = (): ReactElement => {
       />
 
       <ActionCard
-        title="Estimate Gas"
+        title="Transaction Data"
         topComp={
           <KaTextInput
             inputProps={{
@@ -26,7 +26,6 @@ const EstimateGas = (): ReactElement => {
               onChangeText: setTxData,
             }}
             containerStyle={{ flex: 1 }}
-
           />
         }
         onClickBtn={estimateGas}
