@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+import { JsonRpcProvider } from 'ethers'
+import { Web3 } from 'web3'
 
 import { SdkObject, SdkType } from '@/types'
 import { parseError, stringify, UTIL } from '@/common'
@@ -57,13 +59,13 @@ export const useEstimateGasPage = (): UseEstimateGasPageReturn => {
         return
       }
 
-      if (sdk === 'viem') {
-        const parsedTx = UTIL.jsonTryParse(txData) as ViemParsedTx
-        if (!parsedTx || typeof parsedTx !== 'object') {
-          toast.error('Invalid transaction data format')
-          return
-        }
+      const parsedTx = UTIL.jsonTryParse(txData) as ViemParsedTx
+      if (!parsedTx || typeof parsedTx !== 'object') {
+        toast.error('Invalid transaction data format')
+        return
+      }
 
+      if (sdk === 'viem') {
         const txRequest: any = {
           account: parsedTx.account || parsedTx.from,
         }
@@ -79,8 +81,38 @@ export const useEstimateGasPage = (): UseEstimateGasPageReturn => {
 
         res[sdk] = stringify(gasEstimate)
         toast.success('Gas estimation completed successfully')
+      } else if (sdk === 'ethers') {
+        const provider = new JsonRpcProvider(rpcUrl)
+        
+        const txRequest: any = {}
+        
+        if (parsedTx.from) txRequest.from = parsedTx.from
+        if (parsedTx.to) txRequest.to = parsedTx.to
+        if (parsedTx.data) txRequest.data = parsedTx.data || parsedTx.input
+        if (parsedTx.value) txRequest.value = parsedTx.value ? BigInt(parsedTx.value) : undefined
+        if (parsedTx.gasPrice) txRequest.gasPrice = BigInt(parsedTx.gasPrice)
+        
+        const gasEstimate = await provider.estimateGas(txRequest)
+        
+        res[sdk] = stringify(gasEstimate)
+        toast.success('Gas estimation completed successfully')
+      } else if (sdk === 'web3') {
+        const web3 = new Web3(rpcUrl)
+        
+        const txRequest: any = {}
+        
+        if (parsedTx.from) txRequest.from = parsedTx.from
+        if (parsedTx.to) txRequest.to = parsedTx.to
+        if (parsedTx.data) txRequest.data = parsedTx.data || parsedTx.input
+        if (parsedTx.value) txRequest.value = parsedTx.value
+        if (parsedTx.gasPrice) txRequest.gasPrice = parsedTx.gasPrice
+        
+        const gasEstimate = await web3.eth.estimateGas(txRequest)
+        
+        res[sdk] = stringify(gasEstimate)
+        toast.success('Gas estimation completed successfully')
       } else {
-        toast.warning('Only supported with viem')
+        toast.warning('Only supported with viem, ethers, and web3')
       }
     } catch (error) {
       res[sdk] = parseError(error)
