@@ -2,8 +2,6 @@ import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { JsonRpcProvider } from 'ethers'
 import { Web3 } from 'web3'
-import { Wallet } from '@kaiachain/ethers-ext/v6'
-import { Web3 as KaiaWeb3 } from '@kaiachain/web3js-ext'
 
 import { SdkObject, SdkType } from '@/types'
 import { parseError, stringify, UTIL } from '@/common'
@@ -100,24 +98,6 @@ export const useEstimateGasPage = (): UseEstimateGasPageReturn => {
     return stringify(await web3.eth.estimateGas(txRequest))
   }
 
-  const estimateGasWithEthersExt = async (parsedTx: ParsedTx) => {
-    const provider = new JsonRpcProvider(rpcUrl)
-    const wallet = new Wallet(parsedTx.from || '', provider)
-    const txRequest = createBaseTxRequest(parsedTx)
-
-    if (parsedTx.gas) txRequest.gasLimit = parsedTx.gas
-
-    return stringify(await wallet.estimateGas(txRequest))
-  }
-
-  const estimateGasWithWeb3Ext = async (parsedTx: ParsedTx) => {
-    const provider = new KaiaWeb3.providers.HttpProvider(rpcUrl)
-    const web3 = new KaiaWeb3(provider)
-    const txRequest = createBaseTxRequest(parsedTx)
-
-    return stringify(await web3.eth.estimateGas(txRequest))
-  }
-
   const estimateGasFunc = async () => {
     const res = { ...result }
     try {
@@ -141,18 +121,11 @@ export const useEstimateGasPage = (): UseEstimateGasPageReturn => {
       } else if (sdk === 'web3') {
         res[sdk] = await estimateGasWithWeb3(parsedTx)
         toast.success('Gas estimation completed successfully')
-      } else if (sdk === 'ethersExt') {
-        res[sdk] = await estimateGasWithEthersExt(parsedTx)
-        toast.success('Gas estimation completed successfully')
-      } else if (sdk === 'web3Ext') {
-        res[sdk] = await estimateGasWithWeb3Ext(parsedTx)
-        toast.success('Gas estimation completed successfully')
       } else {
-        toast.warning('Unsupported SDK type')
+        toast.warning('Only supported with viem, ethers, and web3')
       }
     } catch (error) {
       res[sdk] = parseError(error)
-      toast.error('Gas estimation failed')
     }
     setResult(res)
   }

@@ -368,39 +368,6 @@ const txRequest = {
 }
 
 const gasEstimate = await web3.eth.estimateGas(txRequest)`,
-  ethersExt: `import { JsonRpcProvider } from 'ethers'
-import { Wallet } from '@kaiachain/ethers-ext/v6'
-
-const provider = new JsonRpcProvider(rpcUrl)
-const wallet = new Wallet(privateKey, provider)
-
-// Estimate gas for a transaction
-const txRequest = {
-  from: "0x3f71029af4e252b25b9ab999f77182f0cd3bc085",
-  to: "0x87ac99835e67168d4f9a40580f8f5c33550ba88b",
-  data: "0x8ada066e",
-  value: "0x0",
-  gasPrice: "0x5d21dba00",
-  gasLimit: "0x100000"
-}
-
-const gasEstimate = await wallet.estimateGas(txRequest)`,
-  web3Ext: `import { Web3 } from '@kaiachain/web3js-ext'
-
-const provider = new Web3.providers.HttpProvider(rpcUrl)
-const web3 = new Web3(provider)
-
-// Estimate gas for a transaction
-const txRequest = {
-  from: "0x3f71029af4e252b25b9ab999f77182f0cd3bc085",
-  to: "0x87ac99835e67168d4f9a40580f8f5c33550ba88b",
-  data: "0x8ada066e",
-  value: "0x0",
-  gasPrice: "0x5d21dba00",
-  gas: "0x100000"
-}
-
-const gasEstimate = await web3.eth.estimateGas(txRequest)`
 })
 
 export default {
