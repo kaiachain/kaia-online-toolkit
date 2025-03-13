@@ -1,6 +1,6 @@
 # Kaia Online Toolkit
 
-Kaia Online Toolkit provides code examples and a web application to help developers utilize the Kaia blockchain and its SDK (caver-js) easily. The toolkit serves as both a reference implementation and a practical set of tools for blockchain developers building applications on the Kaia network.
+Kaia Online Toolkit provides code examples and a web application to help developers utilize the Kaia blockchain and its SDK easily. The toolkit serves as both a reference implementation and a practical set of tools for blockchain developers building applications on the Kaia network.
 
 You can access the live toolkit at: https://toolkit.kaia.io/
 
@@ -8,7 +8,7 @@ You can access the live toolkit at: https://toolkit.kaia.io/
 
 ### Wallet Integration
 - **Web3Modal Integration** with multiple wallet providers:
-  - Kaikas Wallet
+  - KaiaWallet
   - Klip Wallet
   - Metamask
   - RainbowKit
@@ -62,17 +62,17 @@ The application will be available at `http://localhost:5173/`
 
 ## Wallet Integration Examples
 
-### Kaikas Wallet
-Download [@klaytn/kaikas-web3-provider](https://github.com/klaytn/kaikas-web3-provider) package. The following code shows how to configure the provider options:
+### KaiaWallet
+Download [@kaiachain/kaiawallet-web3-provider](https://github.com/kaiachain/kaiawallet-web3-provider) package. The following code shows how to configure the provider options:
 
 ```javascript
 import Web3 from "web3";
 import Web3Modal from "web3modal";
-import { KaikasWeb3Provider } from "@klaytn/kaikas-web3-provider"
+import { KaiawalletWeb3Provider } from "@kaiachain/kaiawallet-web3-provider"
 
 const providerOptions = {
-  kaikas: {
-    package: KaikasWeb3Provider // required
+  kaiawallet: {
+    package: KaiawalletWeb3Provider // required
   }
 };
 
