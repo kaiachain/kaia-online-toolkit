@@ -15,7 +15,7 @@ export type UseEip1155PageReturn = {
   setBytecode: (bytecode: string) => void
   abi: string
   setAbi: (abi: string) => void
-  deployContract: () => void
+  deployContract: () => Promise<void>
   deployResult: SdkObject
   ableToDeploy: boolean
 }
@@ -45,18 +45,18 @@ export const useEip1155Page = (): UseEip1155PageReturn => {
       encodedData = encodeDeployData({
         abi: JSON.parse(abi),
         bytecode: bytecode as `0x${string}`,
-        args: [address, ''],
+        args: [address],
       })
     } else if (sdk === 'ethers') {
       const cf = new ethers.ContractFactory(JSON.parse(abi), bytecode)
-      const deployTx = await cf.getDeployTransaction(...[address, ''])
+      const deployTx = await cf.getDeployTransaction(...[address])
 
       encodedData = deployTx.data as `0x${string}`
     } else if (sdk === 'web3') {
       const contract = new Contract(JSON.parse(abi))
 
       encodedData = contract
-        .deploy({ data: bytecode, arguments: [address, ''] })
+        .deploy({ data: bytecode, arguments: [address] })
         .encodeABI() as `0x${string}`
     }
 

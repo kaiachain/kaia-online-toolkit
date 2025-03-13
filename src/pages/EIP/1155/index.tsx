@@ -20,8 +20,8 @@ import {
   CodeBlock,
 } from '@/components'
 import { EIP, URL_MAP, CONTRACT, NETWORK } from '@/consts'
-import { useAppNavigate, useExplorer, useNetwork } from '@/hooks'
-import { RoutePath, SdkObject } from '@/types'
+import { useExplorer, useNetwork } from '@/hooks'
+import { SdkObject } from '@/types'
 import { useEip1155Page } from '@/hooks/page/useEip1155Page'
 
 const StyledSummary = styled.summary`
@@ -42,38 +42,26 @@ const solidity = `// SPDX-License-Identifier: MIT
 // Compatible with OpenZeppelin Contracts ^5.0.0
 pragma solidity ^0.8.22;
 
-import {ERC1155} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {ERC1155} from "@openzeppelin/contracts@5.2.0/token/ERC1155/ERC1155.sol";
+import {Ownable} from "@openzeppelin/contracts@5.2.0/access/Ownable.sol";
 
-contract ToolkitMultiToken is ERC1155, Ownable {
-    constructor(address initialOwner, string memory uri_)
-        ERC1155(uri_)
-        Ownable(initialOwner)
-    {
-        // Mint some initial tokens to the deployer
-        _mint(msg.sender, 0, 1000, ""); // Fungible token with ID 0
-        _mint(msg.sender, 1, 1, "");    // Non-fungible token with ID 1
-        _mint(msg.sender, 2, 100, "");  // Semi-fungible token with ID 2
+contract ToolkitToken is ERC1155, Ownable {
+    constructor(address initialOwner) ERC1155("") Ownable(initialOwner) {
+        mint(msg.sender, 0, 1, '');
     }
 
-    function mint(address to, uint256 id, uint256 amount, bytes memory data) 
-        public 
-        onlyOwner 
+    function mint(address account, uint256 id, uint256 amount, bytes memory data)
+        public
+        onlyOwner
     {
-        _mint(to, id, amount, data);
+        _mint(account, id, amount, data);
     }
 
-    function mintBatch(
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-    ) public onlyOwner {
+    function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
+        public
+        onlyOwner
+    {
         _mintBatch(to, ids, amounts, data);
-    }
-
-    function setURI(string memory newuri) public onlyOwner {
-        _setURI(newuri);
     }
 }`
 
@@ -95,17 +83,17 @@ sendTransaction({
 
 const codesForEncodedData: SdkObject = {
   viem: codeWrapper(
-    `import { encodeDeployData, parseEther } from 'viem'`,
+    `import { encodeDeployData } from 'viem'`,
     `const encodedData = encodeDeployData({
   abi,
   bytecode,
-  args: [address, ""],
+  args: [address],
 })`
   ),
   ethers: codeWrapper(
     `import { ethers } from 'ethers'`,
     `const cf = new ethers.ContractFactory(abi, bytecode)
-const deployTx = await cf.getDeployTransaction(...[address, ""])
+const deployTx = await cf.getDeployTransaction(...[address])
 const encodedData = deployTx.data`
   ),
   web3: codeWrapper(
@@ -113,7 +101,7 @@ const encodedData = deployTx.data`
     `const contract = new Contract(abi)
 
 const encodedData = contract
-  .deploy({ data: bytecode, arguments: [address, ""] })
+  .deploy({ data: bytecode, arguments: [address] })
   .encodeABI()`
   ),
   ethersExt: '',
@@ -125,7 +113,6 @@ const ERC1155 = (): ReactElement => {
   const { chainId: appChainId } = useNetwork()
   const showDeployForm = address && chainId === Number(appChainId)
   const { getTheme } = useKaTheme()
-  const { navigate } = useAppNavigate()
   const { getExplorerLink } = useExplorer()
   const {
     sdk,
@@ -152,38 +139,31 @@ const ERC1155 = (): ReactElement => {
         <details style={{ gap: 10, display: 'flex', flexDirection: 'column' }}>
           <StyledSummary>Features</StyledSummary>
           <View>
-            <KaText fontType="body/lg_700">Multi-Token Support</KaText>
+            <KaText fontType="body/lg_700">Pausable</KaText>
             <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-              {`Allows a single contract to manage multiple token types (fungible, non-fungible, and semi-fungible).
-Reduces deployment costs and simplifies token management compared to separate ERC-20 and ERC-721 contracts.`}
+              {`Allows token transfers to be paused by designated addresses.
+Useful for emergency response and security measures during critical situations.`}
             </StyledDesc>
           </View>
           <View>
-            <KaText fontType="body/lg_700">Batch Operations</KaText>
+            <KaText fontType="body/lg_700">Burnable</KaText>
             <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-              {`Enables efficient batch transfers of multiple token types in a single transaction.
-Significantly reduces gas costs for operations involving multiple tokens or recipients.`}
+              {`Enables users to destroy their own tokens, reducing the total supply.
+Provides a standard way to remove tokens from circulation when they're no longer needed.`}
             </StyledDesc>
           </View>
           <View>
-            <KaText fontType="body/lg_700">Metadata Handling</KaText>
+            <KaText fontType="body/lg_700">Supply</KaText>
             <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-              {`Provides a standard way to associate metadata with tokens through URI mapping.
-Supports both shared and token-specific metadata through URI substitution.`}
+              {`Adds tracking of total supply per token ID.
+Useful for distinguishing between fungible and non-fungible tokens within the same contract.`}
             </StyledDesc>
           </View>
           <View>
-            <KaText fontType="body/lg_700">Receiver Interface</KaText>
+            <KaText fontType="body/lg_700">URIStorage</KaText>
             <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-              {`Includes ERC1155TokenReceiver interface for secure token transfers to contracts.
-Prevents tokens from being locked in contracts that don't support ERC-1155 tokens.`}
-            </StyledDesc>
-          </View>
-          <View>
-            <KaText fontType="body/lg_700">Approval Mechanism</KaText>
-            <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-              {`Uses setApprovalForAll to grant or revoke operator permissions for all tokens owned by an address.
-Simplifies approval management compared to per-token approvals in ERC-20 and ERC-721.`}
+              {`Provides storage-based token URI management for individual token types.
+Allows setting different URIs for each token ID while maintaining a common base URI.`}
             </StyledDesc>
           </View>
         </details>
