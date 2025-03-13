@@ -14,7 +14,7 @@ const EstimateGas = (): ReactElement => {
       <SdkSelectBox
         sdk={sdk}
         setSdk={setSdk}
-        optionsList={['viem', 'ethers', 'web3']}
+        optionsList={['viem', 'ethers', 'web3', 'ethersExt', 'web3Ext']}
       />
 
       <ActionCard
