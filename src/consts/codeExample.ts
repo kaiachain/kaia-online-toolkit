@@ -321,6 +321,22 @@ const blockByNumber = await web3.eth.getBlock(blockNumber)
 const blockByHash = await web3.eth.getBlock('0x...')`,
 })
 
+const estimateGas = createSdkObject({
+  viem: `import { createPublicClient, http } from 'viem'
+
+const client = createPublicClient({
+  transport: http(rpcUrl),
+})
+
+// Estimate gas for a transaction
+const gasEstimate = await client.estimateGas({
+  from: '0x...',
+  to: '0x...',
+  data: '0x...',
+  value: BigInt(0)
+})`,
+})
+
 export default {
   switchNetworkCode,
   accountFromPrivateKey,
@@ -334,4 +350,5 @@ export default {
   rlpEncode,
   rlpDecode,
   blockInfo,
+  estimateGas,
 }

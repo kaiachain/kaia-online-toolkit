@@ -32,6 +32,7 @@ import BlockTxPage from './BlockTx'
 import BlockInfoPage from './BlockTx/BlockInfo'
 import RlpEncodePage from './BlockTx/RlpEncode'
 import RlpDecodePage from './BlockTx/RlpDecode'
+import EstimateGasPage from './BlockTx/EstimateGas'
 
 import UtilityPage from './Utility'
 import Utility_AboutPage from './Utility/About'
@@ -151,6 +152,10 @@ export default [
           {
             path: RoutePath.BlockTx_RlpDecode,
             Component: RlpDecodePage,
+          },
+          {
+            path: RoutePath.BlockTx_EstimateGas,
+            Component: EstimateGasPage,
           },
         ],
       },
