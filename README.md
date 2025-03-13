@@ -9,7 +9,6 @@ You can access the live toolkit at: https://toolkit.kaia.io/
 ### Wallet Integration
 - **Web3Modal Integration** with multiple wallet providers:
   - KaiaWallet
-  - Klip Wallet
   - Metamask
   - RainbowKit
   - OKX Wallet
@@ -85,49 +84,25 @@ const provider = await web3Modal.connect();
 const web3 = new Web3(provider);
 ```
 
-### Klip Wallet
-Download [@klaytn/klip-web3-provider](https://github.com/klaytn/klip-web3-provider) package first. Then you can easily integrate Klip wallet as below:
-```javascript
-import Web3 from "web3";
-import Web3Modal from "web3modal";
-import { KlipWeb3Provider } from "@klaytn/klip-web3-provider"
 
-const providerOptions = {
-    klip: {
-        package: KlipWeb3Provider, //required
-        options: {
-            bappName: "web3Modal Example App", //required
-            rpcUrl: "RPC URL" //required
-        }
-    }
-};
-
-const web3Modal = new Web3Modal({
-    providerOptions: providerOptions //required
-});
-
-const provider = await web3Modal.connect();
-
-const web3 = new Web3(provider);
-```
 
 ### RainbowKit Integration
 The toolkit also demonstrates integration with RainbowKit for a more customizable wallet connection experience:
 
 ```javascript
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { kaiaWallet, okxWallet } from '@rainbow-me/rainbowkit/wallets';
 import { WagmiProvider } from 'wagmi';
-import { mainnet, kaia, kairos } from 'wagmi/chains';
-import { kaiaWallet } from '@rainbow-me/rainbowkit/wallets';
+import { mainnet, sepolia, kaia, kairos } from 'wagmi/chains';
 
 const config = getDefaultConfig({
   appName: 'Kaia Toolkit',
   projectId: 'YOUR_PROJECT_ID',
-  chains: [mainnet, kaia, kairos],
+  chains: [mainnet, sepolia, kaia, kairos],
   wallets: [
     {
       groupName: 'Recommended',
-      wallets: [kaiaWallet],
+      wallets: [kaiaWallet, okxWallet],
     },
   ],
 });
