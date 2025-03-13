@@ -45,7 +45,7 @@ pragma solidity ^0.8.22;
 import {ERC721} from "@openzeppelin/contracts@5.2.0/token/ERC721/ERC721.sol";
 import {Ownable} from "@openzeppelin/contracts@5.2.0/access/Ownable.sol";
 
-contract MyToken is ERC721, Ownable {
+contract ToolkitToken is ERC721, Ownable {
     uint256 private _nextTokenId;
 
     constructor(address initialOwner)
@@ -69,7 +69,7 @@ const codeWrapper = (
 ${children1}
 
 const { address } = useAccount()
-const { sendTransactionAsync } = useSendTransaction()
+const { sendTransaction } = useSendTransaction()
 
 ${children2}
 
@@ -135,31 +135,31 @@ const ERC721 = (): ReactElement => {
         <details style={{ gap: 10, display: 'flex', flexDirection: 'column' }}>
           <StyledSummary>Features</StyledSummary>
           <View>
-            <KaText fontType="body/lg_700">Non-Fungible</KaText>
+            <KaText fontType="body/lg_700">Burnable</KaText>
             <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-              {`Each token is unique and cannot be interchanged with other tokens.
-Each token is identified by a distinct tokenId.`}
+              {`Allows token holders to destroy their own tokens.
+Provides a way to permanently remove tokens from circulation.`}
             </StyledDesc>
           </View>
           <View>
-            <KaText fontType="body/lg_700">Ownership Tracking</KaText>
+            <KaText fontType="body/lg_700">Enumerable</KaText>
             <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-              {`Tracks and manages ownership of each token.
-The ownerOf function allows querying the owner of a specific token.`}
+              {`Enables on-chain enumeration of all tokens or tokens owned by an address.
+Adds functionality to track and query the total supply and token ownership.`}
             </StyledDesc>
           </View>
           <View>
-            <KaText fontType="body/lg_700">Transfer Mechanism</KaText>
+            <KaText fontType="body/lg_700">URIStorage</KaText>
             <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-              {`Provides transferFrom and safeTransferFrom functions to transfer token ownership.
-safeTransferFrom includes safety checks to ensure the recipient can handle tokens.`}
+              {`A more flexible but more expensive way of storing token metadata.
+Allows for dynamic URI updates for individual tokens after minting.`}
             </StyledDesc>
           </View>
           <View>
-            <KaText fontType="body/lg_700">Approval System</KaText>
+            <KaText fontType="body/lg_700">Votes</KaText>
             <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-              {`Allows token owners to grant transfer permissions to third parties.
-Includes approve for single tokens and setApprovalForAll for operator management.`}
+              {`Support for voting and vote delegation with ERC-721 tokens.
+Enables token-based governance where each NFT represents voting power.`}
             </StyledDesc>
           </View>
         </details>
