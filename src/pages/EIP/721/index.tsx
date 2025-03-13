@@ -20,8 +20,8 @@ import {
   CodeBlock,
 } from '@/components'
 import { EIP, URL_MAP, CONTRACT, NETWORK } from '@/consts'
-import { useAppNavigate, useExplorer, useNetwork } from '@/hooks'
-import { RoutePath, SdkObject } from '@/types'
+import { useExplorer, useNetwork } from '@/hooks'
+import { SdkObject } from '@/types'
 import { useEip721Page } from '@/hooks/page/useEip721Page'
 
 const StyledSummary = styled.summary`
@@ -42,42 +42,23 @@ const solidity = `// SPDX-License-Identifier: MIT
 // Compatible with OpenZeppelin Contracts ^5.0.0
 pragma solidity ^0.8.22;
 
-import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {ERC721} from "@openzeppelin/contracts@5.2.0/token/ERC721/ERC721.sol";
+import {Ownable} from "@openzeppelin/contracts@5.2.0/access/Ownable.sol";
 
-contract ToolkitNFT is ERC721, ERC721URIStorage, Ownable {
+contract MyToken is ERC721, Ownable {
     uint256 private _nextTokenId;
 
     constructor(address initialOwner)
-        ERC721("ToolkitNFT", "TNFT")
+        ERC721("ToolkitToken", "TKT")
         Ownable(initialOwner)
-    {}
+    {
+        safeMint(msg.sender);
+    }
 
-    function safeMint(address to, string memory uri) public onlyOwner {
+    function safeMint(address to) public onlyOwner returns (uint256) {
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
-    }
-
-    // The following functions are overrides required by Solidity.
-
-    function tokenURI(uint256 tokenId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (string memory)
-    {
-        return super.tokenURI(tokenId);
-    }
-
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721, ERC721URIStorage)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
+        return tokenId;
     }
 }`
 
@@ -88,7 +69,7 @@ const codeWrapper = (
 ${children1}
 
 const { address } = useAccount()
-const { sendTransaction } = useSendTransaction()
+const { sendTransactionAsync } = useSendTransaction()
 
 ${children2}
 
@@ -99,10 +80,8 @@ sendTransaction({
 
 const codesForEncodedData: SdkObject = {
   viem: codeWrapper(
-    `import { encodeDeployData, parseEther } from 'viem'`,
-    `const name = 'MyNFT'
-const symbol = 'MNFT'
-const encodedData = encodeDeployData({
+    `import { encodeDeployData } from 'viem'`,
+    `const encodedData = encodeDeployData({
   abi,
   bytecode,
   args: [address],
@@ -110,18 +89,13 @@ const encodedData = encodeDeployData({
   ),
   ethers: codeWrapper(
     `import { ethers } from 'ethers'`,
-    `const name = 'MyNFT'
-const symbol = 'MNFT'
-const cf = new ethers.ContractFactory(abi, bytecode)
-const deployTx = await cf.getDeployTransaction(...[address])
+    `const cf = new ethers.ContractFactory(abi, bytecode)
+const deployTx = await cf.getDeployTransaction(address)
 const encodedData = deployTx.data`
   ),
   web3: codeWrapper(
     `import { Contract } from 'web3'`,
-    `const name = 'MyNFT'
-const symbol = 'MNFT'
-const contract = new Contract(abi)
-
+    `const contract = new Contract(abi)
 const encodedData = contract
   .deploy({ data: bytecode, arguments: [address] })
   .encodeABI()`
@@ -135,7 +109,6 @@ const ERC721 = (): ReactElement => {
   const { chainId: appChainId } = useNetwork()
   const showDeployForm = address && chainId === Number(appChainId)
   const { getTheme } = useKaTheme()
-  const { navigate } = useAppNavigate()
   const { getExplorerLink } = useExplorer()
   const {
     sdk,
@@ -162,38 +135,31 @@ const ERC721 = (): ReactElement => {
         <details style={{ gap: 10, display: 'flex', flexDirection: 'column' }}>
           <StyledSummary>Features</StyledSummary>
           <View>
-            <KaText fontType="body/lg_700">Metadata</KaText>
+            <KaText fontType="body/lg_700">Non-Fungible</KaText>
             <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-              {`Provides a mechanism to associate metadata with tokens through tokenURI.
-Enables rich content like images, descriptions, and attributes for each NFT.`}
+              {`Each token is unique and cannot be interchanged with other tokens.
+Each token is identified by a distinct tokenId.`}
             </StyledDesc>
           </View>
           <View>
-            <KaText fontType="body/lg_700">Enumerable</KaText>
+            <KaText fontType="body/lg_700">Ownership Tracking</KaText>
             <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-              {`Allows on-chain enumeration of all tokens or tokens owned by a specific address.
-Useful for applications that need to display all NFTs in a collection.`}
+              {`Tracks and manages ownership of each token.
+The ownerOf function allows querying the owner of a specific token.`}
             </StyledDesc>
           </View>
           <View>
-            <KaText fontType="body/lg_700">URIStorage</KaText>
+            <KaText fontType="body/lg_700">Transfer Mechanism</KaText>
             <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-              {`Provides storage and retrieval mechanisms for token URIs.
-Efficiently stores metadata URIs on-chain for each token.`}
+              {`Provides transferFrom and safeTransferFrom functions to transfer token ownership.
+safeTransferFrom includes safety checks to ensure the recipient can handle tokens.`}
             </StyledDesc>
           </View>
           <View>
-            <KaText fontType="body/lg_700">Mintable</KaText>
+            <KaText fontType="body/lg_700">Approval System</KaText>
             <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-              {`Allows an administrator to mint new tokens.
-Essential for creating new NFTs in a collection.`}
-            </StyledDesc>
-          </View>
-          <View>
-            <KaText fontType="body/lg_700">Burnable</KaText>
-            <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-              {`Allows token owners to permanently destroy (burn) their tokens.
-Useful for redemption mechanisms or reducing supply.`}
+              {`Allows token owners to grant transfer permissions to third parties.
+Includes approve for single tokens and setApprovalForAll for operator management.`}
             </StyledDesc>
           </View>
         </details>

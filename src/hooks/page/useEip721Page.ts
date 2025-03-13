@@ -15,7 +15,7 @@ export type UseEip721PageReturn = {
   setBytecode: (bytecode: string) => void
   abi: string
   setAbi: (abi: string) => void
-  deployContract: () => void
+  deployContract: () => Promise<void>
   deployResult: SdkObject
   ableToDeploy: boolean
 }
@@ -41,49 +41,56 @@ export const useEip721Page = (): UseEip721PageReturn => {
   const deployContract = async (): Promise<void> => {
     if (!ableToDeploy) return
     let encodedData: `0x${string}` | null = null
-    
-    // For ERC-721, we need name, symbol, and initialOwner as constructor arguments
-    const name = 'MyNFT'
-    const symbol = 'MNFT'
-    
-    if (sdk === 'viem') {
-      encodedData = encodeDeployData({
-        abi: JSON.parse(abi),
-        bytecode: bytecode as `0x${string}`,
-        args: [name, symbol, address], // ERC-721 constructor args
-      })
-    } else if (sdk === 'ethers') {
-      const cf = new ethers.ContractFactory(JSON.parse(abi), bytecode)
-      const deployTx = await cf.getDeployTransaction(...[name, symbol, address])
 
-      encodedData = deployTx.data as `0x${string}`
-    } else if (sdk === 'web3') {
-      const contract = new Contract(JSON.parse(abi))
+    try {
+      if (sdk === 'viem') {
+        encodedData = encodeDeployData({
+          abi: JSON.parse(abi),
+          bytecode: bytecode as `0x${string}`,
+          args: [address],
+        })
+      } else if (sdk === 'ethers') {
+        const cf = new ethers.ContractFactory(JSON.parse(abi), bytecode)
+        const deployTx = await cf.getDeployTransaction(address)
 
-      encodedData = contract
-        .deploy({ data: bytecode, arguments: [name, symbol, address] })
-        .encodeABI() as `0x${string}`
-    }
+        encodedData = deployTx.data as `0x${string}`
+      } else if (sdk === 'web3') {
+        const contract = new Contract(JSON.parse(abi))
 
-    if (encodedData) {
+        encodedData = contract
+          .deploy({
+            data: bytecode,
+            arguments: [address],
+          })
+          .encodeABI() as `0x${string}`
+      }
+
+      if (encodedData) {
+        const res = { ...deployResult }
+        await sendTransactionAsync(
+          {
+            data: encodedData,
+            value: 0n,
+          },
+          {
+            onSuccess: (data) => {
+              res[sdk] = data
+              setDeployResult(res)
+            },
+            onError: (error) => {
+              res[sdk] = parseError(error)
+              setDeployResult(res)
+            },
+          }
+        )
+        window.scrollBy({ top: 100, left: 0, behavior: 'smooth' })
+      }
+    } catch (error: unknown) {
       const res = { ...deployResult }
-      await sendTransactionAsync(
-        {
-          data: encodedData,
-          value: 0n,
-        },
-        {
-          onSuccess: (data) => {
-            res[sdk] = data
-            setDeployResult(res)
-          },
-          onError: (error) => {
-            res[sdk] = parseError(error)
-            setDeployResult(res)
-          },
-        }
-      )
-      window.scrollBy({ top: 100, left: 0, behavior: 'smooth' })
+      res[sdk] = `Error: ${
+        error instanceof Error ? error.message : 'Unknown error'
+      }`
+      setDeployResult(res)
     }
   }
 
