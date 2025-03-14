@@ -147,6 +147,10 @@ export default [
             Component: BlockInfoPage,
           },
           {
+            path: RoutePath.BlockTx_Block,
+            Component: BlockInfoPage,
+          },
+          {
             path: RoutePath.BlockTx_RlpEncode,
             Component: RlpEncodePage,
           },

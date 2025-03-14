@@ -49,23 +49,28 @@ export const useSignVerifyPage = (): UseSignVerifyPageReturn => {
       if (sdk === 'viem') {
         try {
           const isValid = await verifyMessage({
-            address,
+            address: `0x${address}` as `0x${string}`,
             message,
-            signature,
+            signature: signature as `0x${string}`,
           })
           const recoveredAddress = await recoverMessageAddress({
             message,
-            signature,
+            signature: signature as `0x${string}`,
           })
-          res[sdk] = `Verification: ${isValid ? 'Valid' : 'Invalid'}\nRecovered address: ${recoveredAddress}`
+          res[sdk] = `Verification: ${
+            isValid ? 'Valid' : 'Invalid'
+          }\nRecovered address: ${recoveredAddress}`
         } catch (error) {
           res[sdk] = `Invalid signature: ${parseError(error)}`
         }
       } else if (sdk === 'ethers') {
         try {
           const recoveredAddress = ethers.verifyMessage(message, signature)
-          const isValid = recoveredAddress.toLowerCase() === address.toLowerCase()
-          res[sdk] = `Verification: ${isValid ? 'Valid' : 'Invalid'}\nRecovered address: ${recoveredAddress}`
+          const isValid =
+            recoveredAddress.toLowerCase() === address.toLowerCase()
+          res[sdk] = `Verification: ${
+            isValid ? 'Valid' : 'Invalid'
+          }\nRecovered address: ${recoveredAddress}`
         } catch (error) {
           res[sdk] = `Invalid signature: ${parseError(error)}`
         }
@@ -73,8 +78,11 @@ export const useSignVerifyPage = (): UseSignVerifyPageReturn => {
         try {
           const web3 = new Web3()
           const recoveredAddress = web3.eth.accounts.recover(message, signature)
-          const isValid = recoveredAddress.toLowerCase() === address.toLowerCase()
-          res[sdk] = `Verification: ${isValid ? 'Valid' : 'Invalid'}\nRecovered address: ${recoveredAddress}`
+          const isValid =
+            recoveredAddress.toLowerCase() === address.toLowerCase()
+          res[sdk] = `Verification: ${
+            isValid ? 'Valid' : 'Invalid'
+          }\nRecovered address: ${recoveredAddress}`
         } catch (error) {
           res[sdk] = `Invalid signature: ${parseError(error)}`
         }

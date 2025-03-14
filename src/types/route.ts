@@ -26,7 +26,7 @@ export enum RoutePath {
   Wallet_Okx = '/wallet/okx',
 
   BlockTx = '/blockTx',
-  //BlockTx_Block = '/blockTx/block',
+  BlockTx_Block = '/blockTx/block',
   BlockTx_RlpEncode = '/blockTx/rlpEncode',
   BlockTx_RlpDecode = '/blockTx/rlpDecode',
 
@@ -65,7 +65,7 @@ const RouteParams: Record<RoutePath, any> = {
   [RoutePath.Wallet_Okx]: undefined,
 
   [RoutePath.BlockTx]: undefined,
-  //[RoutePath.BlockTx_Block]: undefined,
+  [RoutePath.BlockTx_Block]: undefined,
   [RoutePath.BlockTx_RlpEncode]: undefined,
   [RoutePath.BlockTx_RlpDecode]: undefined,
 
