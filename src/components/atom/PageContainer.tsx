@@ -148,7 +148,7 @@ const SubMenuItem = ({
   return (
     <StyledSubMenuItem
       onClick={() => {
-        navigate(to)
+        navigate(to as any)
         onClick()
       }}
     >

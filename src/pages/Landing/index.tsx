@@ -79,7 +79,7 @@ const Landing = (): ReactElement => {
           </KaText>
         </View>
         <View>
-          <KaButton size="md" onClick={() => navigate(RoutePath.Account)}>
+          <KaButton size="md" onClick={() => navigate(RoutePath.Account as any)}>
             Start from account
           </KaButton>
         </View>
@@ -114,7 +114,7 @@ const Landing = (): ReactElement => {
                 <KaButton
                   type="secondary"
                   fill
-                  onClick={() => navigate(RoutePath.Wallet_RainbowKit)}
+                  onClick={() => navigate(RoutePath.Wallet_RainbowKit as any)}
                 >
                   Tryout
                 </KaButton>
@@ -132,7 +132,7 @@ const Landing = (): ReactElement => {
                 <KaButton
                   type="secondary"
                   fill
-                  onClick={() => navigate(RoutePath.Wallet)}
+                  onClick={() => navigate(RoutePath.Wallet as any)}
                 >
                   Tryout
                 </KaButton>
