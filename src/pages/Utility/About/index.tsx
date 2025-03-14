@@ -19,7 +19,6 @@ const StyledLink = styled(View)`
 `
 
 const Item = ({
-  id,
   type,
   title,
   description,
@@ -30,7 +29,7 @@ const Item = ({
 }): ReactElement => {
   const { getTheme } = useKaTheme()
   const { navigate } = useAppNavigate()
-  
+
   const typeText = useMemo(() => {
     const indexOf = type.toLocaleLowerCase().indexOf(inputLower)
 
@@ -68,12 +67,16 @@ const Item = ({
     const indexOf = description.toLocaleLowerCase().indexOf(inputLower)
     return indexOf > -1 ? (
       <span>
-        {description.slice(0, description.toLocaleLowerCase().indexOf(inputLower))}
+        {description.slice(
+          0,
+          description.toLocaleLowerCase().indexOf(inputLower)
+        )}
         <span style={{ color: getTheme('brand', '5') }}>
           {description.slice(indexOf, indexOf + inputLower.length)}
         </span>
         {description.slice(
-          description.toLocaleLowerCase().indexOf(inputLower) + inputLower.length
+          description.toLocaleLowerCase().indexOf(inputLower) +
+            inputLower.length
         )}
       </span>
     ) : (
@@ -85,9 +88,7 @@ const Item = ({
     <>
       <KaText fontType="body/md_400">{typeText}</KaText>
       <StyledLink onClick={() => navigate(to)}>
-        <KaText fontType="body/md_700" mb="1">
-          {titleText}
-        </KaText>
+        <KaText fontType="body/md_700">{titleText}</KaText>
         <KaText fontType="body/sm_400" color={getTheme('gray', '6')}>
           {descriptionText}
         </KaText>
