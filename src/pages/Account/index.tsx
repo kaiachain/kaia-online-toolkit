@@ -5,10 +5,6 @@ import { RoutePath } from '@/types'
 
 const subMenuList = [
   {
-    title: 'Dev',
-    to: RoutePath.Account_Dev,
-  },
-  {
     title: 'Account',
     to: RoutePath.Account,
   },

@@ -5,7 +5,6 @@ import HomePage from './Home'
 import LandingPage from './Landing'
 
 import AccountPage from './Account'
-import Account_DevPage from './Account/Dev'
 import Account_BasicPage from './Account/Basic'
 import Account_MnemonicPage from './Account/Mnemonic'
 import Account_KeystorePage from './Account/Keystore'
@@ -56,10 +55,6 @@ export default [
           {
             index: true,
             Component: Account_BasicPage,
-          },
-          {
-            path: RoutePath.Account_Dev,
-            Component: Account_DevPage,
           },
           {
             path: RoutePath.Account_Mnemonic,

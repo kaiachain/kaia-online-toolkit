@@ -2,7 +2,6 @@ export enum RoutePath {
   Home = '/',
 
   Account = '/account',
-  Account_Dev = '/account/dev',
   //Account_Basic = '/account/basic',
   Account_Mnemonic = '/account/mnemonic',
   Account_Keystore = '/account/keystore',
@@ -42,7 +41,6 @@ const RouteParams: Record<RoutePath, any> = {
   [RoutePath.Home]: undefined,
 
   [RoutePath.Account]: undefined,
-  [RoutePath.Account_Dev]: undefined,
   //[RoutePath.Account_Basic]: undefined,
   [RoutePath.Account_Mnemonic]: undefined,
   [RoutePath.Account_Keystore]: undefined,
