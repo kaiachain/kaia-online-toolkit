@@ -6,7 +6,7 @@ import { Container, Card, View, LinkA } from '@/components'
 import { EIP, URL_MAP } from '@/consts'
 
 import { useAppNavigate } from '@/hooks'
-import { EipItemType } from '@/types'
+import { EipItemType, RoutePath } from '@/types'
 
 const StyledCard = styled(Card)`
   display: grid;
@@ -18,7 +18,7 @@ const StyledLink = styled(View)`
   cursor: pointer;
 `
 
-const Item = ({
+const Item = <T extends RoutePath>({
   no,
   type,
   title,
@@ -27,6 +27,7 @@ const Item = ({
   to,
 }: EipItemType & {
   inputLower: string
+  to: T
 }): ReactElement => {
   const { getTheme } = useKaTheme()
   const { navigate } = useAppNavigate()
@@ -82,7 +83,7 @@ const Item = ({
     <>
       <KaText fontType="body/md_400">{noText}</KaText>
       <KaText fontType="body/md_400">{typeText}</KaText>
-      <StyledLink onClick={() => navigate(to)}>
+      <StyledLink onClick={() => navigate(to as any)}>
         <KaText fontType="body/md_400" color={getTheme('info', '4')}>
           {titleText}
         </KaText>

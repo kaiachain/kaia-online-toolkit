@@ -160,7 +160,7 @@ Reduces the total supply and is useful for deflationary token models.`}
               Permit{' '}
               <span
                 onClick={(): void => {
-                  navigate(RoutePath.EIP_2612)
+                  navigate(RoutePath.EIP_2612 as any)
                 }}
                 style={{ cursor: 'pointer', color: getTheme('info', '4') }}
               >

@@ -103,14 +103,14 @@ const menuList: {
   },
 ]
 
-const MenuItem = ({ title, to }: { title: string; to: RoutePath }) => {
+const MenuItem = <T extends RoutePath>({ title, to }: { title: string; to: T }) => {
   const { pathname } = useLocation()
   const isCurrent = pathname.includes(to)
   const { getTheme } = useKaTheme()
   const { navigate } = useAppNavigate()
 
   return (
-    <StyledMenuItem onClick={() => navigate(to)}>
+    <StyledMenuItem onClick={() => navigate(to as any)}>
       <View style={{ flex: 1, justifyContent: 'center' }}>
         <KaText
           color={isCurrent ? getTheme('brand', '5') : getTheme('gray', '2')}
@@ -124,13 +124,13 @@ const MenuItem = ({ title, to }: { title: string; to: RoutePath }) => {
   )
 }
 
-const MobileMenuItem = ({
+const MobileMenuItem = <T extends RoutePath>({
   title,
   to,
   onClick,
 }: {
   title: string
-  to: RoutePath
+  to: T
   onClick: () => void
 }) => {
   const { pathname } = useLocation()
@@ -141,7 +141,7 @@ const MobileMenuItem = ({
   return (
     <StyledMobileMenuItem
       onClick={() => {
-        navigate(to)
+        navigate(to as any)
         onClick()
       }}
     >
@@ -207,7 +207,7 @@ const Header = (): ReactElement => {
         )}
         <View
           style={{ justifyContent: 'center', cursor: 'pointer' }}
-          onClick={() => navigate(RoutePath.Home)}
+          onClick={() => navigate(RoutePath.Home as any)}
         >
           <Row style={{ alignItems: 'baseline', gap: 6.2 }}>
             <img src={kaiaBrandImg} alt="logo" style={{ height: 16 }} />

@@ -129,14 +129,14 @@ const StyledMobileSubMenuClose = styled(View)`
   top: 20px;
 `
 
-const SubMenuItem = ({
+const SubMenuItem = <T extends RoutePath>({
   title,
   to,
   isKaiaOnly,
   onClick,
 }: {
   title: string
-  to: RoutePath
+  to: T
   isKaiaOnly?: boolean
   onClick: () => void
 }) => {
@@ -148,7 +148,7 @@ const SubMenuItem = ({
   return (
     <StyledSubMenuItem
       onClick={() => {
-        navigate(to)
+        navigate(to as any)
         onClick()
       }}
     >
