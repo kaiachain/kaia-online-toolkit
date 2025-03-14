@@ -14,8 +14,6 @@ const SignVerify = (): ReactElement => {
   const {
     sdk,
     setSdk,
-    address,
-    setAddress,
     message,
     setMessage,
     signature,
@@ -37,16 +35,6 @@ const SignVerify = (): ReactElement => {
         title="Verify Message Signature"
         topComp={
           <>
-            <InputContainer>
-              <KaTextInput
-                inputProps={{
-                  value: address,
-                  onChangeText: setAddress,
-                  placeholder: 'Enter signer address',
-                }}
-                containerStyle={{ flex: 1 }}
-              />
-            </InputContainer>
             <InputContainer>
               <KaTextInput
                 inputProps={{
