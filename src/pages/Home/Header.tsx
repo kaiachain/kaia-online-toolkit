@@ -95,7 +95,7 @@ const menuList: {
   },
   {
     title: 'Block & Tx',
-    to: RoutePath.BlockTx_Block,
+    to: RoutePath.BlockTx,
   },
   {
     title: 'Utility',
