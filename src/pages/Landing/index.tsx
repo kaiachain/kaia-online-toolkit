@@ -95,10 +95,18 @@ const Landing = (): ReactElement => {
                 <KaText fontType="body/md_400">KaiaWallet</KaText>
               </View>
               <View style={{ gap: 10, flex: 1 }}>
-                <KaButton type="secondary" fill>
+                <KaButton
+                  type="secondary"
+                  fill
+                  onClick={() => navigate(RoutePath.Wallet_KaiawalletMobile)}
+                >
                   Mobile
                 </KaButton>
-                <KaButton type="secondary" fill>
+                <KaButton
+                  type="secondary"
+                  fill
+                  onClick={() => navigate(RoutePath.Wallet_KaiawalletExtension)}
+                >
                   Extension
                 </KaButton>
               </View>
