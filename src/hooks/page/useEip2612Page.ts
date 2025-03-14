@@ -1,12 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { SdkObject, SdkType } from '@/types'
-import {
-  useAccount,
-  useSendTransaction,
-  usePublicClient,
-  useWalletClient,
-} from 'wagmi'
+import { useAccount, useSendTransaction, useWalletClient } from 'wagmi'
 import { ethers, parseUnits } from 'ethers'
 import { useNetwork } from '../independent'
 import { parseError } from '@/common'
@@ -117,7 +112,7 @@ export const useEip2612Page = (): UseEip2612PageReturn => {
         const nonce = await contract.nonces(address)
         const tokenName = await contract.name()
 
-        let domainData = {
+        const domainData = {
           name: tokenName,
           version: '1',
           chainId: Number(chainId),
@@ -199,7 +194,7 @@ export const useEip2612Page = (): UseEip2612PageReturn => {
             try {
               const PERMIT_TYPEHASH = await contract.PERMIT_TYPEHASH()
               detailedError += `\nContract PERMIT_TYPEHASH: ${PERMIT_TYPEHASH}`
-            } catch (e) {
+            } catch {
               const PERMIT_TYPEHASH = ethers.keccak256(
                 ethers.toUtf8Bytes(
                   'Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)'
