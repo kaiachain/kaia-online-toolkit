@@ -13,7 +13,7 @@ const list: UtilityItemType[] = [
     type: UtilityTypeEnum.ADDRESS,
     title: 'Address Checksum',
     to: RoutePath.Utility_AddressChecksum,
-    description: 'Validate and convert Kaia addresses to their checksummed format according to KIP-13 standards.',
+    description: 'Validate and convert Kaia addresses to their checksummed format using Ethereum address standards.',
   },
   {
     id: 'sign-verify',
