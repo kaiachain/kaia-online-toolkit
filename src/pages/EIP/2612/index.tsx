@@ -69,88 +69,249 @@ sendTransaction({
 })`
 
 const codesForEncodedData: SdkObject = {
-  viem: '',
+  viem: codeWrapper(
+    `import { encodeDeployData } from 'viem'`,
+    `const encodedData = encodeDeployData({
+  abi: JSON.parse(abi),
+  bytecode: bytecode as \`0x\${string}\`,
+  args: [address],
+})`
+  ),
   ethers: codeWrapper(
     `import { ethers } from 'ethers'`,
     `const cf = new ethers.ContractFactory(JSON.parse(abi), bytecode)
 const deployTx = await cf.getDeployTransaction(...[address])
 const encodedData = deployTx.data`
   ),
-  web3: '',
+  web3: codeWrapper(
+    `import Web3, { Contract } from 'web3'`,
+    `const contract = new Contract(JSON.parse(abi))
+const encodedData = contract
+  .deploy({ data: bytecode, arguments: [address] })
+  .encodeABI()`
+  ),
   ethersExt: '',
   web3Ext: '',
 }
 
 const permitCodeExamples: SdkObject = {
-  viem: '',
-  ethers: `import { ethers } from 'ethers'
-  import { useWalletClient } from 'wagmi'
+  viem: `import { useViem } from '@/hooks/independent'
+import { useWalletClient } from 'wagmi'
 
-  const { data: walletClient } = useWalletClient()
-  const ethersProvider = walletClient ? new ethers.BrowserProvider(walletClient.transport) : null
-  const ethersSigner = await ethersProvider.getSigner(address)
+const { client } = useViem({ chainId })
+const { data: walletClient } = useWalletClient()
 
-  const contract = new ethers.Contract(contractAddress, JSON.parse(abi), ethersSigner)
+const tokenName = await client.readContract({
+  address: contractAddress as \`0x\${string}\`,
+  abi: JSON.parse(abi),
+  functionName: 'name',
+  args: [],
+})
 
-  const decimals = Number(await contract.decimals())
-  const tokenValue = parseUnits(tokenAmount || '1', decimals)
-  const deadline = BigInt(Math.floor(Date.now() / 1000) + 60)
-  const nonce = await contract.nonces(address)
-  const tokenName = await contract.name()
+const decimals = await client.readContract({
+  address: contractAddress as \`0x\${string}\`,
+  abi: JSON.parse(abi),
+  functionName: 'decimals',
+  args: [],
+})
 
-  let domainData = {
-    name: tokenName,
-    version: '1',
-    chainId: Number(chainId),
-    verifyingContract: contractAddress,
-  }
+const nonce = await client.readContract({
+  address: contractAddress as \`0x\${string}\`,
+  abi: JSON.parse(abi),
+  functionName: 'nonces',
+  args: [address],
+})
 
-  if (typeof contract.eip712Domain === 'function') {
-    const eip712Domain = await contract.eip712Domain()
-    
-    if (eip712Domain) {
-      if (eip712Domain.name) domainData.name = eip712Domain.name
-      if (eip712Domain.version) domainData.version = eip712Domain.version
-      if (eip712Domain.chainId) domainData.chainId = Number(eip712Domain.chainId)
-      if (eip712Domain.verifyingContract) domainData.verifyingContract = eip712Domain.verifyingContract
-    }
-  }
+const tokenValue = BigInt(tokenAmount || '1') * 10n ** BigInt(decimals)
+const deadline = BigInt(Math.floor(Date.now() / 1000) + 60)
 
-  const types = {
-    Permit: [
-      { name: 'owner', type: 'address' },
-      { name: 'spender', type: 'address' },
-      { name: 'value', type: 'uint256' },
-      { name: 'nonce', type: 'uint256' },
-      { name: 'deadline', type: 'uint256' }
-    ]
-  }
+const domainData = {
+  name: tokenName,
+  version: '1',
+  chainId: Number(chainId),
+  verifyingContract: contractAddress as \`0x\${string}\`,
+}
 
-  const message = {
-    owner: address,
-    spender: DEAD_ADDRESS,
-    value: tokenValue,
-    nonce: nonce,
-    deadline: deadline
-  }
+const types = {
+  Permit: [
+    { name: 'owner', type: 'address' },
+    { name: 'spender', type: 'address' },
+    { name: 'value', type: 'uint256' },
+    { name: 'nonce', type: 'uint256' },
+    { name: 'deadline', type: 'uint256' },
+  ],
+}
 
-  const signature = await ethersSigner.signTypedData(domainData, types, message)
+const message = {
+  owner: address,
+  spender: DEAD_ADDRESS,
+  value: tokenValue,
+  nonce: nonce,
+  deadline: deadline,
+}
 
-  const sig = ethers.Signature.from(signature)
-  const { v, r, s } = sig
+const signature = await walletClient.signTypedData({
+  account: address,
+  domain: domainData,
+  types: types,
+  primaryType: 'Permit',
+  message: message,
+})
 
-  const tx = await contract.permit(
+const r = signature.slice(0, 66)
+const s = \`0x\${signature.slice(66, 130)}\`
+const v = parseInt(signature.slice(130, 132), 16)
+
+const hash = await walletClient.writeContract({
+  address: contractAddress as \`0x\${string}\`,
+  abi: JSON.parse(abi),
+  functionName: 'permit',
+  args: [
     address,
     DEAD_ADDRESS,
     tokenValue,
+    deadline,
+    BigInt(v),
+    r,
+    s,
+  ],
+})`,
+  ethers: `import { ethers } from 'ethers'
+import { useWalletClient } from 'wagmi'
+
+const { data: walletClient } = useWalletClient()
+const ethersProvider = walletClient ? new ethers.BrowserProvider(walletClient.transport) : null
+const ethersSigner = await ethersProvider.getSigner(address)
+
+const contract = new ethers.Contract(contractAddress, JSON.parse(abi), ethersSigner)
+
+const decimals = Number(await contract.decimals())
+const tokenValue = parseUnits(tokenAmount || '1', decimals)
+const deadline = BigInt(Math.floor(Date.now() / 1000) + 60)
+const nonce = await contract.nonces(address)
+const tokenName = await contract.name()
+
+let domainData = {
+  name: tokenName,
+  version: '1',
+  chainId: Number(chainId),
+  verifyingContract: contractAddress,
+}
+
+if (typeof contract.eip712Domain === 'function') {
+  const eip712Domain = await contract.eip712Domain()
+  
+  if (eip712Domain) {
+    if (eip712Domain.name) domainData.name = eip712Domain.name
+    if (eip712Domain.version) domainData.version = eip712Domain.version
+    if (eip712Domain.chainId) domainData.chainId = Number(eip712Domain.chainId)
+    if (eip712Domain.verifyingContract) domainData.verifyingContract = eip712Domain.verifyingContract
+  }
+}
+
+const types = {
+  Permit: [
+    { name: 'owner', type: 'address' },
+    { name: 'spender', type: 'address' },
+    { name: 'value', type: 'uint256' },
+    { name: 'nonce', type: 'uint256' },
+    { name: 'deadline', type: 'uint256' }
+  ]
+}
+
+const message = {
+  owner: address,
+  spender: DEAD_ADDRESS,
+  value: tokenValue,
+  nonce: nonce,
+  deadline: deadline
+}
+
+const signature = await ethersSigner.signTypedData(domainData, types, message)
+
+const sig = ethers.Signature.from(signature)
+const { v, r, s } = sig
+
+const tx = await contract.permit(
+  address,
+  DEAD_ADDRESS,
+  tokenValue,
+  deadline,
+  v,
+  r,
+  s
+)
+
+await tx.wait()`,
+  web3: `import Web3 from 'web3'
+import { useWalletClient } from 'wagmi'
+
+const { data: walletClient } = useWalletClient()
+const web3 = new Web3(walletClient)
+const contract = new web3.eth.Contract(JSON.parse(abi), contractAddress, { from: address })
+
+const decimals = Number(await contract.methods.decimals().call())
+const tokenName = String(await contract.methods.name().call())
+const nonce = String(await contract.methods.nonces(address).call())
+
+const tokenValue = web3.utils.toBigInt(BigInt(tokenAmount || '1') * BigInt(10) ** BigInt(decimals))
+const deadline = Math.floor(Date.now() / 1000) + 60
+
+const domainData = {
+  name: tokenName,
+  version: '1',
+  chainId: Number(chainId),
+  verifyingContract: contractAddress,
+}
+
+const types = {
+  Permit: [
+    { name: 'owner', type: 'address' },
+    { name: 'spender', type: 'address' },
+    { name: 'value', type: 'uint256' },
+    { name: 'nonce', type: 'uint256' },
+    { name: 'deadline', type: 'uint256' },
+  ],
+}
+
+const message = {
+  owner: address,
+  spender: DEAD_ADDRESS,
+  value: tokenValue.toString(),
+  nonce: nonce,
+  deadline: deadline.toString(),
+}
+
+const signature = await walletClient.signTypedData({
+  account: address,
+  domain: {
+    name: domainData.name,
+    version: domainData.version,
+    chainId: domainData.chainId,
+    verifyingContract: domainData.verifyingContract as \`0x\${string}\`,
+  },
+  types: {
+    Permit: types.Permit,
+  },
+  primaryType: 'Permit',
+  message: message,
+})
+
+const r = '0x' + signature.substring(2, 66)
+const s = '0x' + signature.substring(66, 130)
+const v = parseInt(signature.substring(130, 132), 16)
+
+const tx = await contract.methods
+  .permit(
+    address,
+    DEAD_ADDRESS,
+    tokenValue.toString(),
     deadline,
     v,
     r,
     s
   )
-
-  await tx.wait()`,
-  web3: '',
+  .send({ from: address })`,
   ethersExt: '',
   web3Ext: '',
 }
@@ -191,7 +352,11 @@ const ERC2612 = (): ReactElement => {
     >
       {showDeployForm ? (
         <>
-          <SdkSelectBox sdk={sdk} setSdk={setSdk} optionsList={['ethers']} />
+          <SdkSelectBox
+            sdk={sdk}
+            setSdk={setSdk}
+            optionsList={['viem', 'ethers', 'web3']}
+          />
           <ActionCard
             title="Deploy ERC-2612 contract"
             topComp={
