@@ -1,7 +1,6 @@
 import { ReactElement } from 'react'
-import { KaTextInput } from '@kaiachain/kaia-design-system'
 
-import { ActionCard, Container, SdkSelectBox } from '@/components'
+import { ActionCard, Container, SdkSelectBox, Textarea } from '@/components'
 import { useEstimateGasPage } from '@/hooks/page/useEstimateGasPage'
 import { CODE_EG } from '@/consts'
 
@@ -20,12 +19,11 @@ const EstimateGas = (): ReactElement => {
       <ActionCard
         title="Transaction Data"
         topComp={
-          <KaTextInput
-            inputProps={{
-              value: txData,
-              onChangeText: setTxData,
-            }}
-            containerStyle={{ flex: 1 }}
+          <Textarea
+            value={txData}
+            onChange={(e) => setTxData(e.target.value)}
+            placeholder={`Fill the transaction data`}
+            rows={8}
           />
         }
         onClickBtn={estimateGas}
