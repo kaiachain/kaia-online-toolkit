@@ -2,15 +2,15 @@ import { ReactElement } from 'react'
 import { KaTextInput } from '@kaiachain/kaia-design-system'
 
 import { ActionCard, Container, SdkSelectBox } from '@/components'
-import { useBlockInfoPage } from '@/hooks/page/useBlockInfoPage'
+import { useAddressChecksumPage } from '@/hooks/page/useAddressChecksumPage'
 import { CODE_EG } from '@/consts'
 
-const BlockInfo = (): ReactElement => {
-  const { sdk, setSdk, blockQuery, setBlockQuery, getBlockInfo, loading, result } =
-    useBlockInfoPage()
+const AddressChecksum = (): ReactElement => {
+  const { sdk, setSdk, address, setAddress, verifyAddress, loading, result } =
+    useAddressChecksumPage()
 
   return (
-    <Container title="Block Info">
+    <Container title="Address Checksum">
       <SdkSelectBox
         sdk={sdk}
         setSdk={setSdk}
@@ -18,24 +18,24 @@ const BlockInfo = (): ReactElement => {
       />
 
       <ActionCard
-        title="Get Block Information"
+        title="Verify Address Checksum"
         topComp={
           <KaTextInput
             inputProps={{
-              value: blockQuery,
-              onChangeText: setBlockQuery,
-              placeholder: 'Enter block number or hash',
+              value: address,
+              onChangeText: setAddress,
+              placeholder: 'Enter Ethereum address',
             }}
             containerStyle={{ flex: 1 }}
           />
         }
-        onClickBtn={getBlockInfo}
+        onClickBtn={verifyAddress}
         btnLoading={loading}
-        code={CODE_EG.blockInfo[sdk]}
+        code={CODE_EG.addressChecksum[sdk]}
         result={result[sdk]}
       />
     </Container>
   )
 }
 
-export default BlockInfo
+export default AddressChecksum

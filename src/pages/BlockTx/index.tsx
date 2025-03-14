@@ -7,7 +7,7 @@ import { RoutePath } from '@/types'
 const subMenuList = [
   {
     title: 'Block Info',
-    to: RoutePath.BlockTx,
+    to: RoutePath.BlockTx_Block,
   },
   {
     title: 'RLP Encode',

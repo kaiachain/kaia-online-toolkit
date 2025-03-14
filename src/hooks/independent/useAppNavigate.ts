@@ -4,31 +4,15 @@ import { NavigateOptions, useLocation, useNavigate } from 'react-router'
 
 import { RouteParams, RoutePath } from '@/types'
 
-type NavigateProps<key extends keyof RouteParams> = key extends unknown
-  ? undefined extends RouteParams[key]
-    ?
-        | [screen: key] // if the params are optional, we don't have to provide it
-        | [
-            screen: key,
-            RouteParams[key],
-            params?: {
-              replace?: NavigateOptions['replace']
-              preventScrollReset?: NavigateOptions['preventScrollReset']
-            }
-          ]
-    : [
-        screen: key,
-        RouteParams[key],
-        params?: {
-          replace?: NavigateOptions['replace']
-          preventScrollReset?: NavigateOptions['preventScrollReset']
-        }
-      ]
-  : never
-
 export const useAppNavigate = <RouteName extends keyof RouteParams>(): {
-  navigate: <RouteName extends keyof RouteParams>(
-    ...args: NavigateProps<RouteName>
+  navigate: (
+    path: RoutePath,
+    params?: any,
+    options?: {
+      replace?: NavigateOptions['replace']
+      preventScrollReset?: NavigateOptions['preventScrollReset']
+      state?: any
+    }
   ) => void
   params?: RouteParams[RouteName]
   goBack: () => void
@@ -43,15 +27,20 @@ export const useAppNavigate = <RouteName extends keyof RouteParams>(): {
 
   const baseNavigate = useNavigate()
 
-  const navigate = <RouteName extends keyof RouteParams>(
-    ...args: NavigateProps<RouteName>
+  const navigate = (
+    path: RoutePath,
+    params?: any,
+    options?: {
+      replace?: NavigateOptions['replace']
+      preventScrollReset?: NavigateOptions['preventScrollReset']
+      state?: any
+    }
   ): void => {
-    const [path, params, rest] = args
     if (params) {
       const query = _.map(params as any, (v, k) => `${k}=${v}`).join('&')
-      baseNavigate(`${path}?${query}`, rest)
+      baseNavigate(`${path}?${query}`, options)
     } else {
-      baseNavigate(path, rest)
+      baseNavigate(path, options)
     }
   }
 

@@ -26,13 +26,15 @@ export enum RoutePath {
   Wallet_Okx = '/wallet/okx',
 
   BlockTx = '/blockTx',
-  //BlockTx_Block = '/blockTx/block',
+  BlockTx_Block = '/blockTx/block',
   BlockTx_RlpEncode = '/blockTx/rlpEncode',
   BlockTx_RlpDecode = '/blockTx/rlpDecode',
 
   Utility = '/utility',
   //Utility_About = '/utility/about',
   Utility_UnitConverter = '/utility/unitConverter',
+  Utility_AddressChecksum = '/utility/addressChecksum',
+  Utility_SignVerify = '/utility/signVerify',
 }
 
 const RouteParams: Record<RoutePath, any> = {
@@ -63,13 +65,15 @@ const RouteParams: Record<RoutePath, any> = {
   [RoutePath.Wallet_Okx]: undefined,
 
   [RoutePath.BlockTx]: undefined,
-  //[RoutePath.BlockTx_Block]: undefined,
+  [RoutePath.BlockTx_Block]: undefined,
   [RoutePath.BlockTx_RlpEncode]: undefined,
   [RoutePath.BlockTx_RlpDecode]: undefined,
 
   [RoutePath.Utility]: undefined,
   //[RoutePath.Utility_About]: undefined,
   [RoutePath.Utility_UnitConverter]: undefined,
+  [RoutePath.Utility_AddressChecksum]: undefined,
+  [RoutePath.Utility_SignVerify]: undefined,
 }
 
 export type RouteParams = typeof RouteParams
