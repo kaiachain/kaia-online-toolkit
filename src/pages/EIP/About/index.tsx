@@ -7,6 +7,7 @@ import { EIP, URL_MAP } from '@/consts'
 
 import { useAppNavigate } from '@/hooks'
 import { EipItemType } from '@/types'
+import { castRoutePath } from '../../../utils/navigation'
 
 const StyledCard = styled(Card)`
   display: grid;
@@ -82,7 +83,7 @@ const Item = ({
     <>
       <KaText fontType="body/md_400">{noText}</KaText>
       <KaText fontType="body/md_400">{typeText}</KaText>
-      <StyledLink onClick={() => navigate(to)}>
+      <StyledLink onClick={() => navigate(castRoutePath(to))}>
         <KaText fontType="body/md_400" color={getTheme('info', '4')}>
           {titleText}
         </KaText>

@@ -16,6 +16,7 @@ import { useAppNavigate, useLayout } from '@/hooks'
 import { RoutePath } from '@/types'
 import { STYLE } from '@/consts'
 import ClickAwayListener from 'react-click-away-listener'
+import { castRoutePath } from '../../utils/navigation'
 
 export type SideMenuListType = {
   title: string
@@ -148,7 +149,7 @@ const SubMenuItem = ({
   return (
     <StyledSubMenuItem
       onClick={() => {
-        navigate(to)
+        navigate(castRoutePath(to))
         onClick()
       }}
     >

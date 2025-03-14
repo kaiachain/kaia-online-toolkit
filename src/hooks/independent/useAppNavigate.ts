@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { NavigateOptions, useLocation, useNavigate } from 'react-router'
 
 import { RouteParams, RoutePath } from '@/types'
+import { castRoutePath } from '../../utils/navigation'
 
 type NavigateProps<key extends keyof RouteParams> = key extends unknown
   ? undefined extends RouteParams[key]
@@ -59,7 +60,7 @@ export const useAppNavigate = <RouteName extends keyof RouteParams>(): {
     if (window?.history?.length > 1) {
       baseNavigate(-1)
     } else {
-      navigate(RoutePath.Home, undefined, {})
+      navigate(castRoutePath(RoutePath.Home), undefined, {})
     }
   }
 

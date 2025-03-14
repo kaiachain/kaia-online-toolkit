@@ -13,6 +13,7 @@ import { Card, LinkA, Row, View } from '@/components'
 import { useAppNavigate, useLayout } from '@/hooks'
 import { RoutePath } from '@/types'
 import { STYLE, URL_MAP } from '@/consts'
+import { castRoutePath } from '../../utils/navigation'
 
 import metamaskImg from '@/images/metamask.svg'
 import rainbowkitImg from '@/images/rainbowkit.png'
@@ -79,7 +80,7 @@ const Landing = (): ReactElement => {
           </KaText>
         </View>
         <View>
-          <KaButton size="md" onClick={() => navigate(RoutePath.Account)}>
+          <KaButton size="md" onClick={() => navigate(castRoutePath(RoutePath.Account))}>
             Start from account
           </KaButton>
         </View>
@@ -114,7 +115,7 @@ const Landing = (): ReactElement => {
                 <KaButton
                   type="secondary"
                   fill
-                  onClick={() => navigate(RoutePath.Wallet_RainbowKit)}
+                  onClick={() => navigate(castRoutePath(RoutePath.Wallet_RainbowKit))}
                 >
                   Tryout
                 </KaButton>
@@ -132,7 +133,7 @@ const Landing = (): ReactElement => {
                 <KaButton
                   type="secondary"
                   fill
-                  onClick={() => navigate(RoutePath.Wallet)}
+                  onClick={() => navigate(castRoutePath(RoutePath.Wallet))}
                 >
                   Tryout
                 </KaButton>

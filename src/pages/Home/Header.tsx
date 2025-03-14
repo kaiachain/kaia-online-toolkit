@@ -16,6 +16,7 @@ import { useAppNavigate, useLayout, useNetwork } from '@/hooks'
 import { useLocation } from 'react-router'
 import { EvmChainIdEnum } from '@/consts'
 import ClickAwayListener from 'react-click-away-listener'
+import { castRoutePath } from '../../utils/navigation'
 
 const StyledContainer = styled(View)`
   background-color: ${themeFunc('gray', '10')};
@@ -110,7 +111,7 @@ const MenuItem = ({ title, to }: { title: string; to: RoutePath }) => {
   const { navigate } = useAppNavigate()
 
   return (
-    <StyledMenuItem onClick={() => navigate(to)}>
+    <StyledMenuItem onClick={() => navigate(castRoutePath(to))}>
       <View style={{ flex: 1, justifyContent: 'center' }}>
         <KaText
           color={isCurrent ? getTheme('brand', '5') : getTheme('gray', '2')}
@@ -141,7 +142,7 @@ const MobileMenuItem = ({
   return (
     <StyledMobileMenuItem
       onClick={() => {
-        navigate(to)
+        navigate(castRoutePath(to))
         onClick()
       }}
     >
@@ -207,7 +208,7 @@ const Header = (): ReactElement => {
         )}
         <View
           style={{ justifyContent: 'center', cursor: 'pointer' }}
-          onClick={() => navigate(RoutePath.Home)}
+          onClick={() => navigate(castRoutePath(RoutePath.Home))}
         >
           <Row style={{ alignItems: 'baseline', gap: 6.2 }}>
             <img src={kaiaBrandImg} alt="logo" style={{ height: 16 }} />

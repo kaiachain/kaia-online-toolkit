@@ -23,6 +23,7 @@ import { EIP, URL_MAP, CONTRACT, NETWORK } from '@/consts'
 import { useAppNavigate, useExplorer, useNetwork } from '@/hooks'
 import { RoutePath, SdkObject } from '@/types'
 import { useEip20Page } from '@/hooks/page/useEip20Page'
+import { castRoutePath } from '../../../utils/navigation'
 
 const StyledSummary = styled.summary`
   cursor: pointer;
@@ -160,7 +161,7 @@ Reduces the total supply and is useful for deflationary token models.`}
               Permit{' '}
               <span
                 onClick={(): void => {
-                  navigate(RoutePath.EIP_2612)
+                  navigate(castRoutePath(RoutePath.EIP_2612))
                 }}
                 style={{ cursor: 'pointer', color: getTheme('info', '4') }}
               >
