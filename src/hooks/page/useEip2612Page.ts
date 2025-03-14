@@ -94,37 +94,6 @@ export const useEip2612Page = (): UseEip2612PageReturn => {
     try {
       const res = { ...permitResult }
 
-      let decimals: number = 18
-      try {
-        if (sdk === 'ethers') {
-          const ethersProvider = walletClient
-            ? new ethers.BrowserProvider(walletClient.transport)
-            : null
-
-          if (!ethersProvider) {
-            throw new Error('Wallet is not connected.')
-          }
-
-          const ethersSigner = await ethersProvider.getSigner(address)
-
-          const contract = new ethers.Contract(
-            contractAddress,
-            JSON.parse(abi),
-            ethersSigner
-          )
-          decimals = Number(await contract.decimals())
-        }
-      } catch (error) {
-        throw new Error(
-          `Failed to read token decimals: ${
-            error instanceof Error ? error.message : 'Unknown error'
-          }.`
-        )
-      }
-
-      const tokenValue = parseUnits(tokenAmount || '1', decimals)
-      const deadline = BigInt(Math.floor(Date.now() / 1000) + 60)
-
       if (sdk === 'ethers') {
         const ethersProvider = walletClient
           ? new ethers.BrowserProvider(walletClient.transport)
@@ -142,8 +111,10 @@ export const useEip2612Page = (): UseEip2612PageReturn => {
           ethersSigner
         )
 
+        const decimals = Number(await contract.decimals())
+        const tokenValue = parseUnits(tokenAmount || '1', decimals)
+        const deadline = BigInt(Math.floor(Date.now() / 1000) + 60)
         const nonce = await contract.nonces(address)
-
         const tokenName = await contract.name()
 
         let domainData = {
@@ -152,29 +123,18 @@ export const useEip2612Page = (): UseEip2612PageReturn => {
           chainId: Number(chainId),
           verifyingContract: contractAddress,
         }
+        if (typeof contract.eip712Domain === 'function') {
+          const eip712Domain = await contract.eip712Domain()
 
-        try {
-          if (typeof contract.eip712Domain === 'function') {
-            const eip712Domain = await contract.eip712Domain()
-
-            if (eip712Domain) {
-              if (eip712Domain.name) domainData.name = eip712Domain.name
-              if (eip712Domain.version)
-                domainData.version = eip712Domain.version
-              if (eip712Domain.chainId)
-                domainData.chainId = Number(eip712Domain.chainId)
-              if (eip712Domain.verifyingContract)
-                domainData.verifyingContract = eip712Domain.verifyingContract
-            }
+          if (eip712Domain) {
+            if (eip712Domain.name) domainData.name = eip712Domain.name
+            if (eip712Domain.version) domainData.version = eip712Domain.version
+            if (eip712Domain.chainId)
+              domainData.chainId = Number(eip712Domain.chainId)
+            if (eip712Domain.verifyingContract)
+              domainData.verifyingContract = eip712Domain.verifyingContract
           }
-        } catch (e) {
-          throw new Error(
-            `Failed to get EIP-712 domain data from contract: ${
-              e instanceof Error ? e.message : 'Unknown error'
-            }.`
-          )
         }
-
         const domain = domainData
 
         const types = {
