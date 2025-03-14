@@ -61,28 +61,7 @@ The application will be available at `http://localhost:5173/`
 
 ## Wallet Integration Examples
 
-### KaiaWallet
-Download [@kaiachain/kaiawallet-web3-provider](https://github.com/kaiachain/kaiawallet-web3-provider) package. The following code shows how to configure the provider options:
 
-```javascript
-import Web3 from "web3";
-import Web3Modal from "web3modal";
-import { KaiawalletWeb3Provider } from "@kaiachain/kaiawallet-web3-provider"
-
-const providerOptions = {
-  kaiawallet: {
-    package: KaiawalletWeb3Provider // required
-  }
-};
-
-const web3Modal = new Web3Modal({
-    providerOptions: providerOptions //required
-});
-
-const provider = await web3Modal.connect();
-
-const web3 = new Web3(provider);
-```
 
 
 
