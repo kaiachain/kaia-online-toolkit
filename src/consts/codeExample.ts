@@ -380,6 +380,55 @@ const recoveredAddress = web3.eth.accounts.recover(message, signature)
 const isValid = recoveredAddress.toLowerCase() === address.toLowerCase()`,
 })
 
+const estimateGas = createSdkObject({
+  viem: `import { createPublicClient, http } from 'viem'
+
+const client = createPublicClient({
+  transport: http(rpcUrl),
+})
+
+// Estimate gas for a transaction
+const txRequest = {
+  account: "0x3f71029af4e252b25b9ab999f77182f0cd3bc085",
+  to: "0x87ac99835e67168d4f9a40580f8f5c33550ba88b",
+  data: "0x8ada066e",
+  value: BigInt("0x0"),
+  gasPrice: BigInt("0x5d21dba00")
+}
+
+const gasEstimate = await client.estimateGas(txRequest)`,
+  ethers: `import { JsonRpcProvider } from 'ethers'
+
+const provider = new JsonRpcProvider(rpcUrl)
+
+// Estimate gas for a transaction
+const txRequest = {
+  from: "0x3f71029af4e252b25b9ab999f77182f0cd3bc085",
+  to: "0x87ac99835e67168d4f9a40580f8f5c33550ba88b",
+  data: "0x8ada066e",
+  value: "0x0",
+  gasPrice: "0x5d21dba00",
+  gasLimit: "0x100000"
+}
+
+const gasEstimate = await provider.estimateGas(txRequest)`,
+  web3: `import { Web3 } from 'web3'
+
+const web3 = new Web3(rpcUrl)
+
+// Estimate gas for a transaction
+const txRequest = {
+  from: "0x3f71029af4e252b25b9ab999f77182f0cd3bc085",
+  to: "0x87ac99835e67168d4f9a40580f8f5c33550ba88b",
+  data: "0x8ada066e",
+  value: "0x0",
+  gasPrice: "0x5d21dba00",
+  gas: "0x100000"
+}
+
+const gasEstimate = await web3.eth.estimateGas(txRequest)`,
+})
+
 export default {
   switchNetworkCode,
   accountFromPrivateKey,
@@ -395,4 +444,5 @@ export default {
   blockInfo,
   addressChecksum,
   signVerify,
+  estimateGas,
 }

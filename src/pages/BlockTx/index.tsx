@@ -17,6 +17,10 @@ const subMenuList = [
     title: 'RLP Decode',
     to: RoutePath.BlockTx_RlpDecode,
   },
+  {
+    title: 'Estimate Gas',
+    to: RoutePath.BlockTx_EstimateGas,
+  },
 ]
 
 const Utility = (): ReactElement => {
