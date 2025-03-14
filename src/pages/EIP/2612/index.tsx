@@ -2,6 +2,7 @@ import { ReactElement } from 'react'
 import {
   KaButton,
   KaText,
+  KaTextInput,
   useKaTheme,
 } from '@kaiachain/kaia-design-system'
 import styled from 'styled-components'
@@ -11,7 +12,6 @@ import {
   Container,
   View,
   LinkA,
-  Card,
   ActionCard,
   SdkSelectBox,
   Textarea,
@@ -34,17 +34,17 @@ const solidity = `// SPDX-License-Identifier: MIT
 // Compatible with OpenZeppelin Contracts ^5.0.0
 pragma solidity ^0.8.22;
 
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {ERC20} from "@openzeppelin/contracts@5.2.0/token/ERC20/ERC20.sol";
+import {ERC20Permit} from "@openzeppelin/contracts@5.2.0/token/ERC20/extensions/ERC20Permit.sol";
+import {Ownable} from "@openzeppelin/contracts@5.2.0/access/Ownable.sol";
 
-contract PermitToken is ERC20, Ownable, ERC20Permit {
+contract TKT is ERC20, Ownable, ERC20Permit {
     constructor(address initialOwner)
-        ERC20("PermitToken", "PTK")
+        ERC20("TKT", "TKT")
         Ownable(initialOwner)
-        ERC20Permit("PermitToken")
+        ERC20Permit("TKT")
     {
-        _mint(msg.sender, 1000 * 10 ** decimals());
+        mint(msg.sender, 100 * 10 ** decimals());
     }
 
     function mint(address to, uint256 amount) public onlyOwner {
@@ -69,270 +69,88 @@ sendTransaction({
 })`
 
 const codesForEncodedData: SdkObject = {
-  viem: codeWrapper(
-    `import { encodeDeployData, parseEther } from 'viem'`,
-    `const encodedData = encodeDeployData({
-  abi,
-  bytecode,
-  args: [address],
-})`
-  ),
+  viem: '',
   ethers: codeWrapper(
     `import { ethers } from 'ethers'`,
-    `const cf = new ethers.ContractFactory(abi, bytecode)
+    `const cf = new ethers.ContractFactory(JSON.parse(abi), bytecode)
 const deployTx = await cf.getDeployTransaction(...[address])
 const encodedData = deployTx.data`
   ),
-  web3: codeWrapper(
-    `import { Contract } from 'web3'`,
-    `const contract = new Contract(abi)
-
-const encodedData = contract
-  .deploy({ data: bytecode, arguments: [address] })
-  .encodeABI()`
-  ),
+  web3: '',
   ethersExt: '',
   web3Ext: '',
 }
 
-// Permit function code examples for each SDK
 const permitCodeExamples: SdkObject = {
-  viem: `import { createWalletClient, custom, encodeFunctionData, parseEther } from 'viem'
-import { mainnet } from 'viem/chains'
-
-// Connect to wallet
-const walletClient = createWalletClient({
-  chain: mainnet,
-  transport: custom(window.ethereum)
-})
-
-// Contract details
-const contractAddress = '0xContractAddress'
-const tokenName = 'PermitToken'
-const tokenVersion = '1'
-const chainId = 1 // Replace with your chain ID
-const owner = '0xYourAddress'
-const spender = '0x000000000000000000000000000000000000dEaD'
-const value = parseEther('10')
-const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600) // 1 hour from now
-
-// 1. Get the nonce for the owner
-const nonce = await readContract({
-  address: contractAddress,
-  abi,
-  functionName: 'nonces',
-  args: [owner]
-})
-
-// 2. Create the domain separator data
-const domain = {
-  name: tokenName,
-  version: tokenVersion,
-  chainId,
-  verifyingContract: contractAddress
-}
-
-// 3. Define the types for EIP-712
-const types = {
-  Permit: [
-    { name: 'owner', type: 'address' },
-    { name: 'spender', type: 'address' },
-    { name: 'value', type: 'uint256' },
-    { name: 'nonce', type: 'uint256' },
-    { name: 'deadline', type: 'uint256' }
-  ]
-}
-
-// 4. Create the permit data
-const message = {
-  owner,
-  spender,
-  value,
-  nonce,
-  deadline
-}
-
-// 5. Sign the typed data
-const signature = await walletClient.signTypedData({
-  account: owner,
-  domain,
-  types,
-  primaryType: 'Permit',
-  message
-})
-
-// 6. Split the signature into v, r, s components
-const r = signature.slice(0, 66)
-const s = '0x' + signature.slice(66, 130)
-const v = parseInt(signature.slice(130, 132), 16)
-
-// 7. Call the permit function
-const permitData = encodeFunctionData({
-  abi,
-  functionName: 'permit',
-  args: [owner, spender, value, deadline, v, r, s]
-})
-
-// 8. Send the transaction
-const hash = await walletClient.sendTransaction({
-  to: contractAddress,
-  data: permitData
-})
-
-console.log('Permit transaction hash:', hash)`,
-
+  viem: '',
   ethers: `import { ethers } from 'ethers'
+  import { useWalletClient } from 'wagmi'
 
-// Connect to provider and signer
-const provider = new ethers.BrowserProvider(window.ethereum)
-const signer = await provider.getSigner()
+  const { data: walletClient } = useWalletClient()
+  const ethersProvider = walletClient ? new ethers.BrowserProvider(walletClient.transport) : null
+  const ethersSigner = await ethersProvider.getSigner(address)
 
-// Contract details
-const contractAddress = '0xContractAddress'
-const tokenName = 'PermitToken'
-const tokenVersion = '1'
-const chainId = 1 // Replace with your chain ID
-const owner = await signer.getAddress()
-const spender = '0x000000000000000000000000000000000000dEaD'
-const value = ethers.parseEther('10')
-const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600) // 1 hour from now
+  const contract = new ethers.Contract(contractAddress, JSON.parse(abi), ethersSigner)
 
-// 1. Create contract instance
-const contract = new ethers.Contract(contractAddress, abi, signer)
+  const decimals = Number(await contract.decimals())
+  const tokenValue = parseUnits(tokenAmount || '1', decimals)
+  const deadline = BigInt(Math.floor(Date.now() / 1000) + 60)
+  const nonce = await contract.nonces(address)
+  const tokenName = await contract.name()
 
-// 2. Get the nonce for the owner
-const nonce = await contract.nonces(owner)
+  let domainData = {
+    name: tokenName,
+    version: '1',
+    chainId: Number(chainId),
+    verifyingContract: contractAddress,
+  }
 
-// 3. Create the domain separator data
-const domain = {
-  name: tokenName,
-  version: tokenVersion,
-  chainId,
-  verifyingContract: contractAddress
-}
+  if (typeof contract.eip712Domain === 'function') {
+    const eip712Domain = await contract.eip712Domain()
+    
+    if (eip712Domain) {
+      if (eip712Domain.name) domainData.name = eip712Domain.name
+      if (eip712Domain.version) domainData.version = eip712Domain.version
+      if (eip712Domain.chainId) domainData.chainId = Number(eip712Domain.chainId)
+      if (eip712Domain.verifyingContract) domainData.verifyingContract = eip712Domain.verifyingContract
+    }
+  }
 
-// 4. Define the types for EIP-712
-const types = {
-  Permit: [
-    { name: 'owner', type: 'address' },
-    { name: 'spender', type: 'address' },
-    { name: 'value', type: 'uint256' },
-    { name: 'nonce', type: 'uint256' },
-    { name: 'deadline', type: 'uint256' }
-  ]
-}
+  const types = {
+    Permit: [
+      { name: 'owner', type: 'address' },
+      { name: 'spender', type: 'address' },
+      { name: 'value', type: 'uint256' },
+      { name: 'nonce', type: 'uint256' },
+      { name: 'deadline', type: 'uint256' }
+    ]
+  }
 
-// 5. Create the permit data
-const message = {
-  owner,
-  spender,
-  value,
-  nonce,
-  deadline
-}
+  const message = {
+    owner: address,
+    spender: DEAD_ADDRESS,
+    value: tokenValue,
+    nonce: nonce,
+    deadline: deadline
+  }
 
-// 6. Sign the typed data
-const signature = await signer.signTypedData(domain, types, message)
+  const signature = await ethersSigner.signTypedData(domainData, types, message)
 
-// 7. Split the signature into v, r, s components
-const sig = ethers.Signature.from(signature)
-const { v, r, s } = sig
+  const sig = ethers.Signature.from(signature)
+  const { v, r, s } = sig
 
-// 8. Call the permit function
-const tx = await contract.permit(owner, spender, value, deadline, v, r, s)
-await tx.wait()
+  const tx = await contract.permit(
+    address,
+    DEAD_ADDRESS,
+    tokenValue,
+    deadline,
+    v,
+    r,
+    s
+  )
 
-console.log('Permit transaction hash:', tx.hash)`,
-
-  web3: `import Web3 from 'web3'
-
-// Connect to Web3
-const web3 = new Web3(window.ethereum)
-await window.ethereum.request({ method: 'eth_requestAccounts' })
-const accounts = await web3.eth.getAccounts()
-const owner = accounts[0]
-
-// Contract details
-const contractAddress = '0xContractAddress'
-const tokenName = 'PermitToken'
-const tokenVersion = '1'
-const chainId = await web3.eth.getChainId()
-const spender = '0x000000000000000000000000000000000000dEaD'
-const value = web3.utils.toWei('10', 'ether')
-const deadline = Math.floor(Date.now() / 1000) + 3600 // 1 hour from now
-
-// 1. Create contract instance
-const contract = new web3.eth.Contract(abi, contractAddress)
-
-// 2. Get the nonce for the owner
-const nonce = await contract.methods.nonces(owner).call()
-
-// 3. Create the domain separator data
-const domain = {
-  name: tokenName,
-  version: tokenVersion,
-  chainId,
-  verifyingContract: contractAddress
-}
-
-// 4. Define the types for EIP-712
-const types = {
-  EIP712Domain: [
-    { name: 'name', type: 'string' },
-    { name: 'version', type: 'string' },
-    { name: 'chainId', type: 'uint256' },
-    { name: 'verifyingContract', type: 'address' }
-  ],
-  Permit: [
-    { name: 'owner', type: 'address' },
-    { name: 'spender', type: 'address' },
-    { name: 'value', type: 'uint256' },
-    { name: 'nonce', type: 'uint256' },
-    { name: 'deadline', type: 'uint256' }
-  ]
-}
-
-// 5. Create the permit data
-const message = {
-  owner,
-  spender,
-  value,
-  nonce,
-  deadline
-}
-
-// 6. Create the data to sign (EIP-712 format)
-const data = JSON.stringify({
-  types,
-  primaryType: 'Permit',
-  domain,
-  message
-})
-
-// 7. Sign the typed data
-const signature = await web3.eth.personal.sign(
-  web3.utils.keccak256(data),
-  owner,
-  ''
-)
-
-// 8. Split the signature into v, r, s components
-const r = signature.slice(0, 66)
-const s = '0x' + signature.slice(66, 130)
-const v = parseInt(signature.slice(130, 132), 16)
-
-// 9. Call the permit function
-const tx = await contract.methods.permit(
-  owner,
-  spender,
-  value,
-  deadline,
-  v,
-  r,
-  s
-).send({ from: owner })
-
-console.log('Permit transaction hash:', tx.transactionHash)`,
+  await tx.wait()`,
+  web3: '',
   ethersExt: '',
   web3Ext: '',
 }
@@ -355,6 +173,8 @@ const ERC2612 = (): ReactElement => {
     ableToDeploy,
     contractAddress,
     setContractAddress,
+    tokenAmount,
+    setTokenAmount,
     generatePermit,
     permitResult,
     ableToPermit,
@@ -369,38 +189,9 @@ const ERC2612 = (): ReactElement => {
         text: data?.summary ?? '',
       }}
     >
-      <Card>
-        <View>
-          <KaText fontType="body/lg_700">Overview</KaText>
-          <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-            {`ERC-2612 extends the ERC-20 standard with a permit function, enabling token approvals to be made with a signature instead of an on-chain transaction. This significantly improves user experience by eliminating the need for users to send a separate approval transaction before token transfers.`}
-          </StyledDesc>
-        </View>
-        <View>
-          <KaText fontType="body/lg_700">Key Benefits</KaText>
-          <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-            {`• Gas Efficiency: Users don't need to pay gas for separate approval transactions
-• Improved UX: Simplifies the token approval process
-• Meta-transactions: Enables gasless transactions where a third party can pay for gas
-• Compatibility: Fully compatible with existing ERC-20 functions`}
-          </StyledDesc>
-        </View>
-        <View>
-          <KaText fontType="body/lg_700">Implementation</KaText>
-          <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-            {`The permit function uses EIP-712 typed structured data signing to securely validate approvals off-chain. The OpenZeppelin implementation provides a complete solution that handles domain separators, nonces, and signature verification.`}
-          </StyledDesc>
-          <CodeBlock text={solidity} />
-        </View>
-      </Card>
-
       {showDeployForm ? (
         <>
-          <SdkSelectBox
-            sdk={sdk}
-            setSdk={setSdk}
-            optionsList={['viem', 'ethers', 'web3']}
-          />
+          <SdkSelectBox sdk={sdk} setSdk={setSdk} optionsList={['ethers']} />
           <ActionCard
             title="Deploy ERC-2612 contract"
             topComp={
@@ -452,36 +243,39 @@ const ERC2612 = (): ReactElement => {
               )
             }
           />
-
-          {/* Permit Section */}
-          <Card>
-            <KaText fontType="body/lg_700">EIP-712 Permit Signing</KaText>
-            <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-              {`The permit function allows users to approve token transfers using an off-chain signature instead of an on-chain transaction. This example demonstrates how to generate a permit signature for the 0x000...00dead address as the spender.`}
-            </StyledDesc>
-            
-            <ActionCard
-              title="Generate Permit Signature"
-              topComp={
-                <StyledDeployForm>
-                  <KaText fontType="body/md_700">Contract Address</KaText>
-                  <Textarea
-                    value={contractAddress}
-                    onChange={(e) => setContractAddress(e.target.value)}
-                    placeholder="0x... (deployed contract address)"
-                  />
-                  <KaText fontType="body/md_700">Permit Details</KaText>
-                  <StyledDesc fontType="body/md_700" color={getTheme('gray', '2')}>
-                    {`This will generate a permit signature allowing 0x000...00dead to spend 10 tokens on your behalf.`}
-                  </StyledDesc>
-                </StyledDeployForm>
-              }
-              code={permitCodeExamples[sdk]}
-              btnDisabled={!ableToPermit}
-              onClickBtn={generatePermit}
-              result={permitResult[sdk]}
-            />
-          </Card>
+          <ActionCard
+            title="Generate Permit Signature"
+            topComp={
+              <StyledDeployForm>
+                <KaText fontType="body/md_700">Contract Address</KaText>
+                <KaTextInput
+                  inputProps={{
+                    value: contractAddress,
+                    onChangeText: setContractAddress,
+                    placeholder: '0x... (deployed contract address)',
+                  }}
+                />
+                <KaText fontType="body/md_700">Token Amount</KaText>
+                <KaTextInput
+                  inputProps={{
+                    value: tokenAmount,
+                    onChangeText: setTokenAmount,
+                    placeholder: 'Enter token amount',
+                  }}
+                />
+                <StyledDesc
+                  fontType="body/md_700"
+                  color={getTheme('gray', '2')}
+                >
+                  {`This will generate a permit signature allowing 0x000...00dead to spend your tokens on your behalf.`}
+                </StyledDesc>
+              </StyledDeployForm>
+            }
+            code={permitCodeExamples[sdk]}
+            btnDisabled={!ableToPermit}
+            onClickBtn={generatePermit}
+            result={permitResult[sdk]}
+          />
         </>
       ) : (
         <View>
