@@ -169,6 +169,102 @@ const tx = {
 const result = await web3.eth.sendSignedTransaction(signResult.rawTransaction)`,
 })
 
+const accountUpdateMultiSigValueTransfer = createSdkObject({
+  ethersExt: `// Step 1: Create provider and wallet
+const provider = new JsonRpcProvider(rpcUrl)
+
+// Step 2: Create transaction
+const tx = {
+  type: TxType.ValueTransfer,
+  from: address,
+  to: recipientAddress,
+  value: BigInt(parseFloat(amount) * 1e18).toString(),
+  gasLimit: 1_000_000,
+  nonce: Number(await provider.getTransactionCount(address)),
+  gasPrice: (await provider.getFeeData()).gasPrice?.toString() || '0x5d21dba00'
+}
+
+// Step 3: Get signatures from required private keys
+let signedTx = null
+const weights = [1, 1, 1] // Example weights for each key
+const threshold = 2 // Example threshold
+let totalWeight = 0
+
+// Sign with each private key until threshold is met
+for (let i = 0; i < privateKeys.length; i++) {
+  const wallet = new Wallet(privateKeys[i], provider)
+  signedTx = await wallet.signTransaction(tx)
+  totalWeight += weights[i]
+  
+  if (totalWeight >= threshold) {
+    break
+  }
+}
+
+// Step 4: Send transaction once threshold is met
+if (totalWeight >= threshold && signedTx) {
+  const txHash = await provider.klay.sendRawTransaction(signedTx)
+  
+  // Wait for transaction receipt
+  let result = null
+  let attempts = 0
+  const maxAttempts = 5
+  const delay = 2000 // 2 seconds delay between attempts
+
+  while (attempts < maxAttempts) {
+    try {
+      result = await provider.klay.getTransactionReceipt(txHash)
+      if (result) break
+    } catch (error) {
+      console.log(\`Attempt \${attempts + 1}: Waiting for transaction receipt...\`, error)
+    }
+    await new Promise(resolve => setTimeout(resolve, delay))
+    attempts++
+  }
+
+  if (!result) {
+    throw new Error('Transaction receipt not found after maximum attempts')
+  }
+}`,
+  web3Ext: `// Step 1: Create provider and web3 instance
+const provider = new Web3.providers.HttpProvider(rpcUrl)
+const web3 = new Web3(provider)
+
+// Step 2: Create transaction
+const tx = {
+  type: TxType.ValueTransfer,
+  from: address,
+  to: recipientAddress,
+  value: BigInt(parseFloat(amount) * 1e18).toString(),
+  gasLimit: 1_000_000,
+  nonce: Number(await web3.eth.getTransactionCount(address)),
+  gasPrice: (await web3.eth.getGasPrice()).toString()
+}
+
+// Step 3: Get signatures from required private keys
+let signedTx = null
+const weights = [1, 1, 1] // Example weights for each key
+const threshold = 2 // Example threshold
+let totalWeight = 0
+
+// Sign with each private key until threshold is met
+for (let i = 0; i < privateKeys.length; i++) {
+  const senderAccount = web3.eth.accounts.privateKeyToAccount(privateKeys[i])
+  const signResult = await senderAccount.signTransaction(tx)
+  signedTx = signResult.rawTransaction
+  totalWeight += weights[i]
+  
+  if (totalWeight >= threshold) {
+    break
+  }
+}
+
+// Step 4: Send transaction once threshold is met
+if (totalWeight >= threshold && signedTx) {
+  const result = await web3.eth.sendSignedTransaction(signedTx)
+}`
+})
+
 const accountUpdateRoleBased = createSdkObject({
   ethersExt: `import { JsonRpcProvider } from 'ethers'
 import { AccountKeyType, TxType, Wallet } from '@kaiachain/ethers-ext/v6'
@@ -436,6 +532,7 @@ export default {
   accountUpdatePublic,
   accountUpdateFail,
   accountUpdateMultiSig,
+  accountUpdateMultiSigValueTransfer,
   accountUpdateRoleBased,
   encryptPrivateKey,
   decryptPrivateKey,
