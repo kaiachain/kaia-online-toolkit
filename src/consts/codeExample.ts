@@ -312,6 +312,48 @@ const tx = {
 const result = await web3.eth.sendSignedTransaction(signResult.rawTransaction)`,
 })
 
+const accountRoleBasedValueTransfer = createSdkObject({
+  ethersExt: `// Step 1: Create provider and wallet
+const provider = new JsonRpcProvider(rpcUrl)
+
+// Step 2: Create transaction
+const tx = {
+  type: TxType.ValueTransfer,
+  from: address,
+  to: recipientAddress,
+  value: BigInt(parseFloat(amount) * 1e18).toString(),
+  gasLimit: 1_000_000,
+  nonce: Number(await provider.getTransactionCount(address)),
+  gasPrice: (await provider.getFeeData()).gasPrice?.toString() || '0x5d21dba00'
+}
+
+// Step 3: Send Transaction with RoleTransaction
+  const wallet = new Wallet(privateKeys[0], provider)
+  const sendTx = await wallet.sendTransaction(tx)
+  const result = await sentTx.wait()
+`,
+  web3Ext: `// Step 1: Create provider and web3 instance
+const provider = new Web3.providers.HttpProvider(rpcUrl)
+const web3 = new Web3(provider)
+
+// Step 2: Create transaction
+const tx = {
+  type: TxType.ValueTransfer,
+  from: address,
+  to: recipientAddress,
+  value: BigInt(parseFloat(amount) * 1e18).toString(),
+  gasLimit: 1_000_000,
+  nonce: Number(await web3.eth.getTransactionCount(address)),
+  gasPrice: (await web3.eth.getGasPrice()).toString()
+}
+
+// Step 3: Send Transaction with RoleTransaction
+
+const signResult = await senderAccount.signTransaction(tx)
+const result = await web3.eth.sendSignedTransaction(signResult.rawTransaction)
+`
+})
+
 const encryptPrivateKey = createSdkObject({
   ethers: `import { Wallet } from 'ethers'
 \nconst wallet = new Wallet(privateKey)
@@ -534,6 +576,7 @@ export default {
   accountUpdateMultiSig,
   accountUpdateMultiSigValueTransfer,
   accountUpdateRoleBased,
+  accountRoleBasedValueTransfer,
   encryptPrivateKey,
   decryptPrivateKey,
   rlpEncode,
