@@ -309,7 +309,7 @@ const AccountKeyMultiSig = (): ReactElement => {
             </Row>
             {!sufficientBalance && (
               <KaText fontType="body/md_400" color={getTheme('danger', '5')}>
-                Please ready at least 0.1 KAIA to execute the tx.
+                Please have at least 0.1 KAIA to execute the tx.
               </KaText>
             )}
             {EvmChainIdEnum.KAIROS === chainId && (
