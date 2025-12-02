@@ -35,6 +35,8 @@ export enum RoutePath {
   Utility_UnitConverter = '/utility/unitConverter',
   Utility_AddressChecksum = '/utility/addressChecksum',
   Utility_SignVerify = '/utility/signVerify',
+
+  KaiaBridge = '/kaiaBridge',
 }
 
 const RouteParams: Record<RoutePath, any> = {
@@ -74,6 +76,8 @@ const RouteParams: Record<RoutePath, any> = {
   [RoutePath.Utility_UnitConverter]: undefined,
   [RoutePath.Utility_AddressChecksum]: undefined,
   [RoutePath.Utility_SignVerify]: undefined,
+
+  [RoutePath.KaiaBridge]: undefined,
 }
 
 export type RouteParams = typeof RouteParams

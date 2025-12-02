@@ -39,6 +39,8 @@ import Utility_UnitConverterPage from './Utility/UnitConverter'
 import Utility_AddressChecksumPage from './Utility/AddressChecksum'
 import Utility_SignVerifyPage from './Utility/SignVerify'
 
+import KaiaBridgePage from './KaiaBridge'
+
 export default [
   {
     path: RoutePath.Home,
@@ -181,6 +183,10 @@ export default [
             Component: Utility_SignVerifyPage,
           },
         ],
+      },
+      {
+        path: RoutePath.KaiaBridge,
+        Component: KaiaBridgePage,
       },
     ],
   },
