@@ -101,6 +101,10 @@ const menuList: {
     title: 'Utility',
     to: RoutePath.Utility,
   },
+  {
+    title: 'Kaia Bridge (FNSA -> KAIA)',
+    to: RoutePath.KaiaBridge,
+  },
 ]
 
 const MenuItem = ({ title, to }: { title: string; to: RoutePath }) => {
