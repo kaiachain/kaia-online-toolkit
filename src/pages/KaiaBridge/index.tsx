@@ -159,7 +159,7 @@ const KaiaBridge = (): ReactElement => {
   return (
     <PageContainer menuList={subMenuList}>
       <Container
-        onlyKaia
+        allowedChainIds={[EvmChainIdEnum.KAIROS]}
         title="Kaia Bridge (FNSA -> KAIA)"
         link={{
           url: `${URL_MAP.kaiaDocs}misc/kaia-transition/kaiabridge/`,
