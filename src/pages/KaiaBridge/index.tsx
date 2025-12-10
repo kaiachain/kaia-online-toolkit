@@ -32,6 +32,30 @@ const StyledHalfCard = styled(Card)`
   min-width: 0;
 `
 
+// TODO: Remove this after we have a mainnet version
+const TestnetBanner = styled.div`
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
+`
+// TODO: Remove this after we have a mainnet version
+const InfoIcon = styled.div`
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+// TODO: Remove this after we have a mainnet version
+const BannerContent = styled.div`
+  flex: 1;
+`
+
 const kaiaProvider = typeof window !== 'undefined' && typeof window.klaytn !== 'undefined' ? window.klaytn : null
 
 const subMenuList = [
@@ -131,16 +155,33 @@ const KaiaBridge = (): ReactElement => {
     }
   }
 
+  // TODO: Remove TestnetBanner after we have a mainnet version
   return (
     <PageContainer menuList={subMenuList}>
       <Container
-        onlyKaia
+        allowedChainIds={[EvmChainIdEnum.KAIROS]}
         title="Kaia Bridge (FNSA -> KAIA)"
         link={{
           url: `${URL_MAP.kaiaDocs}misc/kaia-transition/kaiabridge/`,
           text: 'Kaia docs : KaiaBridge',
         }}
       >
+      <TestnetBanner>
+        <InfoIcon>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#FFFFFF" viewBox="0 0 20 21">
+            <path fillRule="evenodd" d="M1.563 10.5a8.438 8.438 0 1 1 16.875 0 8.438 8.438 0 0 1-16.875 0m8.28-4.687a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5M8.439 9.875c0-.518.42-.937.937-.937H10c.518 0 .938.42.938.937v3.49a.938.938 0 0 1-.313 1.822H10a.937.937 0 0 1-.937-.937v-3.49a.94.94 0 0 1-.626-.885" clipRule="evenodd"></path>
+          </svg>
+        </InfoIcon>
+        <BannerContent>
+          <KaText fontType="body/md_700" style={{ color: '#FFFFFF', marginBottom: '4px' }}>
+            Testing Version - Kairos Testnet Only
+          </KaText>
+          <KaText fontType="body/sm_400" style={{ color: '#FFFFFF', opacity: 0.95 }}>
+            This is a testing version of the Kaia Bridge to be used internally in Kaia Foundation. Do not attempt to use this.
+          </KaText>
+        </BannerContent>
+      </TestnetBanner>
+
       <Card>
         <KaText fontType="body/md_400">
           {`You can swap your FNSA balance to KAIA tokens.
