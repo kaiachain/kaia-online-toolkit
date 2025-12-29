@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react'
+import { ReactElement, useState, useEffect } from 'react'
 import { KaText, KaButton, useKaTheme } from '@kaiachain/kaia-design-system'
 import { useQuery } from '@tanstack/react-query'
 import styled from 'styled-components'
@@ -30,30 +30,6 @@ const StyledCardRow = styled(Row)`
 const StyledHalfCard = styled(Card)`
   flex: 1;
   min-width: 0;
-`
-
-// TODO: Remove this after we have a mainnet version
-const TestnetBanner = styled.div`
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  border-radius: 8px;
-  padding: 16px 20px;
-  margin-bottom: 24px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
-`
-// TODO: Remove this after we have a mainnet version
-const InfoIcon = styled.div`
-  min-width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`
-// TODO: Remove this after we have a mainnet version
-const BannerContent = styled.div`
-  flex: 1;
 `
 
 const kaiaProvider = typeof window !== 'undefined' && typeof window.klaytn !== 'undefined' ? window.klaytn : null
@@ -93,6 +69,7 @@ const KaiaBridge = (): ReactElement => {
     balanceAfterClaim,
     balanceBeforeClaimKaia,
     balanceAfterClaimKaia,
+    balanceDifferenceKaia,
     checkingClaimed,
   } = useKaiaBridgePage()
 
@@ -106,8 +83,11 @@ const KaiaBridge = (): ReactElement => {
     connect: connectMetamask,
     disconnect: disconnectMetamask,
     provider: metamaskProvider,
+    chainId: metamaskChainId,
+    switchNetwork: metamaskSwitchNetwork,
   } = useMetamask()
   const [metamaskError, setMetamaskError] = useState('')
+  const isMetamaskOnCorrectNetwork = metamaskChainId === chainId
 
   // Kaia Wallet connection
   const { data: kaiaAddress = '', refetch: refetchKaiaAccounts } = useQuery({
@@ -125,18 +105,56 @@ const KaiaBridge = (): ReactElement => {
   })
   const [kaiaWalletError, setKaiaWalletError] = useState('')
 
+  // Wallet network checking
+  const { data: walletNetwork, refetch: refetchWalletNetwork } = useQuery<
+    number | string
+  >({
+    queryKey: ['kaiawallet', 'network'],
+    queryFn: async () => {
+      return kaiaProvider?.networkVersion
+    },
+    enabled: !!kaiaProvider && !!kaiaAddress,
+  })
+
+  const isKaiaWalletOnCorrectNetwork = Number(walletNetwork) === Number(chainId)
+
   const connectKaiaWallet = async () => {
     setKaiaWalletError('')
     try {
       if (kaiaProvider) {
         await kaiaProvider.enable()
         refetchKaiaAccounts()
+        refetchWalletNetwork()
       } else {
         setKaiaWalletError('Kaia Wallet not installed')
       }
     } catch (error) {
       setKaiaWalletError(parseError(error))
     }
+  }
+
+  // Set up event listeners for Kaia Wallet
+  useEffect(() => {
+    if (kaiaProvider) {
+      kaiaProvider.on('accountsChanged', () => {
+        refetchKaiaAccounts()
+      })
+      kaiaProvider.on('networkChanged', () => {
+        refetchWalletNetwork()
+      })
+    }
+  }, [kaiaProvider, refetchKaiaAccounts, refetchWalletNetwork])
+
+  const switchNetwork = async () => {
+    try {
+      await kaiaProvider.request({
+        method: 'wallet_switchKlaytnChain',
+        params: [{ chainId }],
+      })
+    } catch (error) {
+      console.error(error)
+    }
+    refetchWalletNetwork()
   }
 
   const handleMetamaskConnect = async () => {
@@ -155,33 +173,24 @@ const KaiaBridge = (): ReactElement => {
     }
   }
 
-  // TODO: Remove TestnetBanner after we have a mainnet version
+  const handleMetamaskSwitchNetwork = async () => {
+    setMetamaskError('')
+    const result = await metamaskSwitchNetwork(chainId as EvmChainIdEnum)
+    if (!result.success) {
+      setMetamaskError(parseError(result.error))
+    }
+  }
+
   return (
     <PageContainer menuList={subMenuList}>
       <Container
-        allowedChainIds={[EvmChainIdEnum.KAIROS]}
+        allowedChainIds={[EvmChainIdEnum.KAIA]}
         title="Kaia Bridge (FNSA -> KAIA)"
         link={{
           url: `${URL_MAP.kaiaDocs}misc/kaia-transition/kaiabridge/`,
           text: 'Kaia docs : KaiaBridge',
         }}
       >
-      <TestnetBanner>
-        <InfoIcon>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#FFFFFF" viewBox="0 0 20 21">
-            <path fillRule="evenodd" d="M1.563 10.5a8.438 8.438 0 1 1 16.875 0 8.438 8.438 0 0 1-16.875 0m8.28-4.687a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5M8.439 9.875c0-.518.42-.937.937-.937H10c.518 0 .938.42.938.937v3.49a.938.938 0 0 1-.313 1.822H10a.937.937 0 0 1-.937-.937v-3.49a.94.94 0 0 1-.626-.885" clipRule="evenodd"></path>
-          </svg>
-        </InfoIcon>
-        <BannerContent>
-          <KaText fontType="body/md_700" style={{ color: '#FFFFFF', marginBottom: '4px' }}>
-            Testing Version - Kairos Testnet Only
-          </KaText>
-          <KaText fontType="body/sm_400" style={{ color: '#FFFFFF', opacity: 0.95 }}>
-            This is a testing version of the Kaia Bridge to be used internally in Kaia Foundation. Do not attempt to use this.
-          </KaText>
-        </BannerContent>
-      </TestnetBanner>
-
       <Card>
         <KaText fontType="body/md_400">
           {`You can swap your FNSA balance to KAIA tokens.
@@ -245,12 +254,54 @@ Note that the provision and claim processcan be executed only once, and cannot b
         </StyledHalfCard>
       </StyledCardRow>
 
-      <Card>
-        {[EvmChainIdEnum.ETHEREUM, EvmChainIdEnum.KAIA].includes(chainId) && (
-          <KaText fontType="title/xs_700" color={getTheme('warning', '5')}>
-            {`WARNING. The current selected network is the mainnet.\nplease execute the test tx on kairos.`}
+      {metamaskConnected && (
+        <Card>
+          <KaText fontType="title/xs_700">Switch Network (MetaMask)</KaText>
+          <KaText
+            fontType="body/md_400"
+            color={getTheme(isMetamaskOnCorrectNetwork ? 'info' : 'warning', '5')}
+          >
+            {isMetamaskOnCorrectNetwork
+              ? 'Already on the correct network'
+              : 'Please switch MetaMask network to Kaia Mainnet'}
           </KaText>
-        )}
+          <KaButton
+            size="md"
+            onClick={handleMetamaskSwitchNetwork}
+            disabled={isMetamaskOnCorrectNetwork}
+          >
+            Confirm
+          </KaButton>
+          {metamaskError && (
+            <KaText fontType="body/sm_400" color={getTheme('danger', '5')}>
+              {metamaskError}
+            </KaText>
+          )}
+        </Card>
+      )}
+
+      {kaiaAddress && (
+        <Card>
+          <KaText fontType="title/xs_700">Switch Network (Kaia Wallet)</KaText>
+          <KaText
+            fontType="body/md_400"
+            color={getTheme(isKaiaWalletOnCorrectNetwork ? 'info' : 'warning', '5')}
+          >
+            {isKaiaWalletOnCorrectNetwork
+              ? 'Already on the correct network'
+              : 'Please switch Kaia Wallet network to Kaia Mainnet'}
+          </KaText>
+          <KaButton
+            size="md"
+            onClick={switchNetwork}
+            disabled={isKaiaWalletOnCorrectNetwork}
+          >
+            Confirm
+          </KaButton>
+        </Card>
+      )}
+
+      <Card>
         <KaText fontType="title/xs_700">Step 1. Derive FNSA address</KaText>
         <KaText fontType="body/md_400">
           Sign a message with your wallet to derive your Finschia address.
@@ -258,7 +309,7 @@ Note that the provision and claim processcan be executed only once, and cannot b
         <KaButton
           size="lg"
           onClick={signAndDerive}
-          disabled={loading || (!metamaskConnected && !kaiaAddress)}
+          disabled={loading || !((metamaskConnected && isMetamaskOnCorrectNetwork) || (kaiaAddress && isKaiaWalletOnCorrectNetwork))}
         >
           {loading ? 'Signing...' : 'Sign & Derive Finschia Address'}
         </KaButton>
@@ -267,6 +318,11 @@ Note that the provision and claim processcan be executed only once, and cannot b
             Please connect MetaMask or Kaia Wallet first
           </KaText>
         )}
+        {(metamaskConnected && !isMetamaskOnCorrectNetwork) || (kaiaAddress && !isKaiaWalletOnCorrectNetwork) ? (
+          <KaText fontType="body/sm_400" color={getTheme('warning', '5')}>
+            Please switch to the correct network before signing
+          </KaText>
+        ) : null}
         {errorMsg && (
           <KaText fontType="body/sm_400" color={getTheme('danger', '5')}>
             {errorMsg}
@@ -406,7 +462,7 @@ Note that the provision and claim processcan be executed only once, and cannot b
                 text={JSON.stringify({
                   before: `${balanceBeforeClaimKaia} KAIA`,
                   after: `${balanceAfterClaimKaia} KAIA`,
-                  difference: `${(parseFloat(balanceAfterClaimKaia) - parseFloat(balanceBeforeClaimKaia)).toFixed(6)} KAIA`,
+                  difference: `${balanceDifferenceKaia} KAIA`,
                 }, null, 2)}
               />
             </View>
