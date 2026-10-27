@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Built by scripts/contracts-wizard/build.mjs
+public/contracts-wizard

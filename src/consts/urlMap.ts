@@ -8,6 +8,9 @@ const eip = 'https://eips.ethereum.org/'
 
 const rainbowKit = 'https://www.rainbowkit.com/docs/'
 
+// Built by scripts/contracts-wizard/build.mjs into public/contracts-wizard
+const contractsWizard = '/contracts-wizard/index.html'
+
 const openZeppelinWizard = 'https://wizard.openzeppelin.com/'
 const openzeppelinDocs = 'https://docs.openzeppelin.com/'
 
@@ -23,6 +26,7 @@ export default {
   metamaskDocs,
   eip,
   rainbowKit,
+  contractsWizard,
   openZeppelinWizard,
   openzeppelinDocs,
   remix,

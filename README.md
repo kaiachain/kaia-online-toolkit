@@ -59,6 +59,15 @@ yarn dev
 
 The application will be available at `http://localhost:5173/`
 
+4. (Optional) Build the Contracts Wizard
+
+The [Kaia Contracts Wizard](https://github.com/kaiachain/kaia-contracts-wizard) is served at `/contracts-wizard/`. It is not committed; this fetches the ref set in `scripts/contracts-wizard/config.json`, builds it, and writes it to `public/contracts-wizard/`:
+```bash
+yarn build:wizard
+```
+
+Settings can be overridden per run with `WIZARD_REPO`, `WIZARD_REF` (commit, tag or branch) and `WIZARD_OUT_DIR`, e.g. `WIZARD_REF=main yarn build:wizard`. In CI, set the `WIZARD_REPO` / `WIZARD_REF` repository variables. The deployed commit is recorded at `/contracts-wizard/version.json`.
+
 ## Wallet Integration Examples
 
 
