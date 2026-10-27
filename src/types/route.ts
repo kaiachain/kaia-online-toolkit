@@ -37,6 +37,8 @@ export enum RoutePath {
   Utility_SignVerify = '/utility/signVerify',
 
   KaiaBridge = '/kaiaBridge',
+
+  ContractsWizard = '/contracts-wizard',
 }
 
 const RouteParams: Record<RoutePath, any> = {
@@ -78,6 +80,8 @@ const RouteParams: Record<RoutePath, any> = {
   [RoutePath.Utility_SignVerify]: undefined,
 
   [RoutePath.KaiaBridge]: undefined,
+
+  [RoutePath.ContractsWizard]: undefined,
 }
 
 export type RouteParams = typeof RouteParams
