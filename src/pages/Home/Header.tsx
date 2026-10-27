@@ -14,7 +14,7 @@ import { Row, View } from '@/components'
 import { RoutePath } from '@/types'
 import { useAppNavigate, useLayout, useNetwork } from '@/hooks'
 import { useLocation } from 'react-router'
-import { EvmChainIdEnum } from '@/consts'
+import { EvmChainIdEnum, URL_MAP } from '@/consts'
 import ClickAwayListener from 'react-click-away-listener'
 
 const StyledContainer = styled(View)`
@@ -77,10 +77,14 @@ const StyledMobileHeightBar = styled(View)`
   border-radius: 360px;
 `
 
-const menuList: {
+type MenuType = {
   title: string
-  to: RoutePath
-}[] = [
+  to: RoutePath | string
+  // Static pages outside the React app (e.g. /contracts-wizard) need a full page load
+  external?: boolean
+}
+
+const menuList: MenuType[] = [
   {
     title: 'Account',
     to: RoutePath.Account,
@@ -105,22 +109,38 @@ const menuList: {
     title: 'Kaia Bridge (FNSA -> KAIA)',
     to: RoutePath.KaiaBridge,
   },
+  {
+    title: 'Contracts Wizard',
+    to: URL_MAP.contractsWizard,
+    external: true,
+  },
 ]
 
-const MenuItem = ({ title, to }: { title: string; to: RoutePath }) => {
-  const { pathname } = useLocation()
-  const isCurrent = pathname.includes(to)
-  const { getTheme } = useKaTheme()
+const useMenuNavigate = () => {
   const { navigate } = useAppNavigate()
+  return ({ to, external }: MenuType) => {
+    if (external) {
+      window.location.assign(to)
+    } else {
+      navigate(to as RoutePath)
+    }
+  }
+}
+
+const MenuItem = (menu: MenuType) => {
+  const { pathname } = useLocation()
+  const isCurrent = pathname.includes(menu.to)
+  const { getTheme } = useKaTheme()
+  const menuNavigate = useMenuNavigate()
 
   return (
-    <StyledMenuItem onClick={() => navigate(to)}>
+    <StyledMenuItem onClick={() => menuNavigate(menu)}>
       <View style={{ flex: 1, justifyContent: 'center' }}>
         <KaText
           color={isCurrent ? getTheme('brand', '5') : getTheme('gray', '2')}
           fontType={isCurrent ? 'body/md_700' : 'body/md_400'}
         >
-          {title}
+          {menu.title}
         </KaText>
       </View>
       {isCurrent && <StyledHeightBar />}
@@ -129,23 +149,20 @@ const MenuItem = ({ title, to }: { title: string; to: RoutePath }) => {
 }
 
 const MobileMenuItem = ({
-  title,
-  to,
   onClick,
-}: {
-  title: string
-  to: RoutePath
+  ...menu
+}: MenuType & {
   onClick: () => void
 }) => {
   const { pathname } = useLocation()
-  const isCurrent = pathname.includes(to)
+  const isCurrent = pathname.includes(menu.to)
   const { getTheme } = useKaTheme()
-  const { navigate } = useAppNavigate()
+  const menuNavigate = useMenuNavigate()
 
   return (
     <StyledMobileMenuItem
       onClick={() => {
-        navigate(to)
+        menuNavigate(menu)
         onClick()
       }}
     >
@@ -155,7 +172,7 @@ const MobileMenuItem = ({
           color={isCurrent ? getTheme('brand', '5') : getTheme('gray', '2')}
           fontType={isCurrent ? 'body/md_700' : 'body/md_400'}
         >
-          {title}
+          {menu.title}
         </KaText>
       </Row>
     </StyledMobileMenuItem>
@@ -221,7 +238,7 @@ const Header = (): ReactElement => {
         {!isUnderTabletWidth && (
           <Row style={{ gap: 40 }}>
             {menuList.map((menu) => (
-              <MenuItem key={menu.title} title={menu.title} to={menu.to} />
+              <MenuItem key={menu.title} {...menu} />
             ))}
           </Row>
         )}
@@ -241,8 +258,7 @@ const Header = (): ReactElement => {
               {menuList.map((menu) => (
                 <MobileMenuItem
                   key={menu.title}
-                  title={menu.title}
-                  to={menu.to}
+                  {...menu}
                   onClick={() => setOpenMobileMenu(false)}
                 />
               ))}

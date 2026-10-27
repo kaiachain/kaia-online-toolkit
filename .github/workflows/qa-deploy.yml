@@ -30,6 +30,13 @@ jobs:
       - name: Installing dependencies
         run: yarn install
 
+      - name: Build Contracts Wizard
+        run: yarn build:wizard
+        env:
+          # Optional repository variables; unset falls back to scripts/contracts-wizard/config.json
+          WIZARD_REPO: ${{ vars.WIZARD_REPO }}
+          WIZARD_REF: ${{ vars.WIZARD_REF }}
+
       - name: Build static files
         run: yarn build
 
