@@ -7,8 +7,11 @@
 //   WIZARD_REF      commit SHA, tag or branch to build (e.g. "main")
 //   WIZARD_OUT_DIR  output directory, relative to the project root
 //
-// Upstream ships no lockfile, so dependencies resolve fresh on every build;
-// the built commit is recorded in version.json.
+// Upstream ships no lockfile, so yarn.lock here pins the dependencies for
+// config.json's ref and is installed with --frozen-lockfile. Any other ref
+// resolves dependencies fresh. After changing the ref in config.json, run
+//   yarn build:wizard --update-lockfile
+// to regenerate yarn.lock. The built commit is recorded in version.json.
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
@@ -27,6 +30,13 @@ const setting = (envName, configValue) => process.env[envName] || configValue
 const repo = setting('WIZARD_REPO', config.repo)
 const ref = setting('WIZARD_REF', config.ref)
 const outDir = path.resolve(projectRoot, setting('WIZARD_OUT_DIR', config.outDir))
+const lockfile = path.join(scriptDir, 'yarn.lock')
+const updateLockfile = process.argv.includes('--update-lockfile')
+const usesPinnedRef = repo === config.repo && ref === config.ref
+
+if (updateLockfile && !usesPinnedRef) {
+  throw new Error('--update-lockfile only applies to the ref in config.json')
+}
 const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'contracts-wizard-'))
 
 const run = (cmd, args, cwd = workDir) =>
@@ -47,6 +57,13 @@ try {
     .toString()
     .trim()
   console.log(`Building Contracts Wizard ${repo} @ ${ref} (${commit})`)
+
+  const frozen = usesPinnedRef && !updateLockfile
+  if (frozen) {
+    fs.copyFileSync(lockfile, path.join(workDir, 'yarn.lock'))
+  } else if (!updateLockfile) {
+    console.warn('Ref differs from config.json; resolving dependencies fresh')
+  }
 
   const ui = path.join(workDir, 'packages/ui')
 
@@ -78,7 +95,15 @@ try {
     s.replace(/url\((['"]?)\/(?!\/)/g, 'url($1')
   )
 
-  run('yarn', ['install', '--non-interactive'])
+  run('yarn', [
+    'install',
+    '--non-interactive',
+    ...(frozen ? ['--frozen-lockfile'] : []),
+  ])
+  if (updateLockfile) {
+    fs.copyFileSync(path.join(workDir, 'yarn.lock'), lockfile)
+    console.log(`Updated ${path.relative(process.cwd(), lockfile)}`)
+  }
   run('yarn', ['--cwd', 'packages/ui', 'build'])
 
   fs.rmSync(outDir, { recursive: true, force: true })
