@@ -41,6 +41,8 @@ import Utility_SignVerifyPage from './Utility/SignVerify'
 
 import KaiaBridgePage from './KaiaBridge'
 
+import ContractsWizardPage from './ContractsWizard'
+
 export default [
   {
     path: RoutePath.Home,
@@ -187,6 +189,11 @@ export default [
       {
         path: RoutePath.KaiaBridge,
         Component: KaiaBridgePage,
+      },
+      {
+        // Also catches missing files under it, e.g. /contracts-wizard/
+        path: `${RoutePath.ContractsWizard}/*`,
+        Component: ContractsWizardPage,
       },
     ],
   },
