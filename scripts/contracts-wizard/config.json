@@ -1,5 +1,5 @@
 {
   "repo": "https://github.com/kaiachain/kaia-contracts-wizard.git",
-  "ref": "main",
+  "ref": "eca37a0e63854cc1e8f635806eebd672c948b9f0",
   "outDir": "public/contracts-wizard"
 }

@@ -68,6 +68,8 @@ yarn build:wizard
 
 Settings can be overridden per run with `WIZARD_REPO`, `WIZARD_REF` (commit, tag or branch) and `WIZARD_OUT_DIR`, e.g. `WIZARD_REF=main yarn build:wizard`. In CI, set the `WIZARD_REPO` / `WIZARD_REF` repository variables. The deployed commit is recorded at `/contracts-wizard/version.json`.
 
+The wizard's dependencies are pinned by `scripts/contracts-wizard/yarn.lock`, which applies to the ref in `config.json`. To upgrade the wizard, change `ref` in `config.json`, run `yarn build:wizard --update-lockfile`, and commit both files.
+
 ## Wallet Integration Examples
 
 
